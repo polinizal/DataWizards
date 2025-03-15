@@ -1,0 +1,40 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ form.title }}</title>
+    {% tailwind_css %}
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <nav class="bg-gray-800 text-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="#" class="text-xl font-semibold">Form Builder</a>
+        </div>
+    </nav>
+
+    <main class="min-h-screen flex justify-center items-center">
+        <div class="max-w-4xl w-full bg-white p-12 rounded-lg shadow-lg mt-6">
+            <h2 class="text-3xl font-bold mb-6 text-center">{{ form.title }}</h2>
+            <ul class="space-y-4">
+                {% for question in form.questions.all %}
+                    <li class="bg-gray-100 p-4 rounded-md shadow-md">
+                        <p class="text-lg font-semibold">{{ question.text }}</p>
+                        {% if question.options.all %}
+                            <ul class="list-disc pl-6 mt-2">
+                                {% for option in question.options.all %}
+                                    <li>{{ option.text }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-12 text-center">
+        <p class="text-lg">&copy; 2025 Form Builder. All rights reserved.</p>
+    </footer>
+</body>
+</html>

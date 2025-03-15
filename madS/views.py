@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from .models import Form, Question, Option
 from .forms import FormCreationForm, QuestionForm, OptionForm
 import json
@@ -35,45 +36,35 @@ def form_builder(request):
     return render(request, "crm/form_builder.html")
 
 @csrf_exempt
-@login_required
 def save_form(request):
     if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            
-            form_form = FormCreationForm({"title": data["title"]})
-            if form_form.is_valid():
-                form = form_form.save(commit=False)
-                form.creator = request.user
-                form.save()
+        data = json.loads(request.body)
+        form_id = data.get("id")
 
-                for q in data.get("questions", []):
-                    question_form = QuestionForm({"text": q["text"], "question_type": q["type"]})
-                    if question_form.is_valid():
-                        question = question_form.save(commit=False)
-                        question.form = form
-                        question.save()
+        if form_id:
+            form = get_object_or_404(Form, id=form_id)
+            form.title = data["title"]
+            form.questions = json.dumps(data["questions"])  # Store as JSON
+            form.save()
+            return JsonResponse({"message": "Form updated successfully!"})
+        else:
+            new_form = Form.objects.create(
+                title=data["title"], questions=json.dumps(data["questions"])
+            )
+            return JsonResponse({"message": "Form saved successfully!"})
+    
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
-                        for option_text in q.get("options", []):
-                            option_form = OptionForm({"text": option_text})
-                            if option_form.is_valid():
-                                option = option_form.save(commit=False)
-                                option.question = question
-                                option.save()
 
-                return JsonResponse({"message": "Form saved successfully!", "form_id": form.id}, status=201)
-            else:
-                return JsonResponse({"error": "Invalid form data"}, status=400)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format"}, status=400)
-        
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-    return JsonResponse({"error": "Invalid request method"}, status=405)
+def get_form(request, form_id):
+    form = get_object_or_404(Form, id=form_id)
+    return JsonResponse({"title": form.title, "questions": json.loads(form.questions)})
 
 
 def form_list(request):
     forms = Form.objects.all()
     return render(request, "crm/form_list.html", {"forms": forms})
+
+def form_detail(request, form_id):
+    form = get_object_or_404(Form, id=form_id)
+    return render(request, "crm/form_detail.html", {"form": form})

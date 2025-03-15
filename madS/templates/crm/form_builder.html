@@ -49,19 +49,24 @@
     <script>
         let questions = [];
 
-        function addQuestion() {
-            const index = questions.length;
-            questions.push({ text: "", type: "radio", options: [] });
-
+        function addQuestion(index = null, text = "", type = "radio", options = []) {
+            if (index === null) {
+                index = questions.length;
+                questions.push({ text: "", type: "radio", options: [] });
+            } else {
+                questions[index] = { text, type, options };
+            }
+        
             const questionDiv = document.createElement("div");
             questionDiv.className = "question bg-gray-100 p-6 rounded-md mt-6 border shadow";
             questionDiv.innerHTML = `
-                <input type="text" placeholder="Question text" oninput="updateQuestion(${index}, this.value)"
+                <input type="text" placeholder="Question text" value="${text}" 
+                    oninput="updateQuestion(${index}, this.value)"
                     class="w-full p-3 border rounded-md mb-3 text-lg">
                 <select onchange="changeType(${index}, this.value)"
                     class="w-full p-3 border rounded-md text-lg">
-                    <option value="radio">Multiple Choice</option>
-                    <option value="checkbox">Checkbox</option>
+                    <option value="radio" ${type === "radio" ? "selected" : ""}>Multiple Choice</option>
+                    <option value="checkbox" ${type === "checkbox" ? "selected" : ""}>Checkbox</option>
                 </select>
                 <button onclick="removeQuestion(${index})" class="bg-red-500 text-white px-4 py-2 rounded-md mt-3">Remove</button>
                 <div class="options mt-3" id="options-${index}">
@@ -69,8 +74,19 @@
                     <ul id="option-list-${index}" class="mt-3"></ul>
                 </div>
             `;
+        
             document.getElementById("questions").appendChild(questionDiv);
+        
+            // Populate options if any
+            options.forEach(option => {
+                const optionList = document.getElementById(`option-list-${index}`);
+                const li = document.createElement("li");
+                li.className = "p-3 bg-gray-200 rounded-md mt-2 border text-lg";
+                li.textContent = option;
+                optionList.appendChild(li);
+            });
         }
+        
 
         function updateQuestion(index, value) {
             questions[index].text = value;
@@ -129,7 +145,7 @@
             });
         }
 
-        function saveForm() {
+        function saveForm(isEdit = false, formId = null) {
             const formTitle = document.getElementById("formTitle").value.trim();
         
             if (!formTitle) {
@@ -137,18 +153,24 @@
                 return;
             }
         
-            fetch("/save-form/", {
+            const payload = { 
+                id: isEdit ? formId : null, // Send form ID if editing
+                title: formTitle, 
+                questions 
+            };
+        
+            fetch(isEdit ? `/edit-form/${formId}/` : "/save-form/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRFToken": getCSRFToken(),
                 },
-                body: JSON.stringify({ title: formTitle, questions }),
+                body: JSON.stringify(payload),
             })
             .then(response => response.json())
             .then(data => {
                 if (data.message) {
-                    alert("Form saved successfully!");
+                    alert(isEdit ? "Form updated successfully!" : "Form saved successfully!");
                     window.location.href = "/saved-forms/";
                 } else {
                     alert("Error: " + data.error);
@@ -156,6 +178,24 @@
             })
             .catch(error => console.error("Error:", error));
         }
+        
+        function loadForm(formId) {
+            fetch(`/get-form/${formId}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("formTitle").value = data.title;
+                questions = data.questions;
+                document.getElementById("questions").innerHTML = "";
+        
+                questions.forEach((q, index) => {
+                    addQuestion(index, q.text, q.type, q.options);
+                });
+        
+                document.getElementById("saveButton").setAttribute("onclick", `saveForm(true, '${formId}')`);
+            })
+            .catch(error => console.error("Error loading form:", error));
+        }
+        
         
         // Function to get CSRF Token
         function getCSRFToken() {
@@ -168,6 +208,13 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
