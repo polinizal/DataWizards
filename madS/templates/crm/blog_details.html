@@ -1,0 +1,74 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog Post Details</title>
+    {% tailwind_css %}
+  </head>
+  <body class="bg-gray-100 text-gray-900">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 text-white p-4 shadow-md">
+      <div class="container mx-auto flex justify-between items-center">
+        <a href="#" class="text-xl font-bold">My Blog</a>
+        <ul class="flex space-x-6">
+          <li><a href="#" class="hover:underline">Home</a></li>
+          <li><a href="#" class="hover:underline">About</a></li>
+          <li><a href="#" class="hover:underline">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Blog Post Content -->
+    <section
+      class="container mx-auto py-10 max-w-3xl bg-white p-6 shadow-lg rounded-lg"
+    >
+      <h1 class="text-3xl font-bold">How to Build a Blog in Django</h1>
+      <p class="text-gray-600 text-sm">By Alice | March 10, 2025</p>
+      <img
+        src="https://via.placeholder.com/800x400"
+        alt="Blog Image"
+        class="mt-4 w-full rounded-lg"
+      />
+
+      <p class="mt-4 text-lg">
+        In this post, we will explore how to build a blog using Django and
+        TailwindCSS...
+      </p>
+
+      <p class="mt-2 text-lg">
+        Django makes it easy to create web applications with minimal setup...
+      </p>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="container mx-auto py-10 max-w-3xl">
+      <h2 class="text-2xl font-bold mb-4">Reviews</h2>
+
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <p class="font-semibold">John Doe</p>
+        <p class="text-gray-600">
+          This blog post is very helpful! Thanks for sharing.
+        </p>
+      </div>
+
+      <div class="bg-white p-4 rounded-lg shadow-md mt-4">
+        <p class="font-semibold">Jane Smith</p>
+        <p class="text-gray-600">Great breakdown! Excited to try this out.</p>
+      </div>
+
+      <div class="bg-white p-4 rounded-lg shadow-md mt-4">
+        <p class="font-semibold">Michael Brown</p>
+        <p class="text-gray-600">
+          I was looking for something like this, thanks!
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center py-4 mt-10">
+      <p>&copy; 2025 My Blog - All Rights Reserved</p>
+    </footer>
+  </body>
+</html>

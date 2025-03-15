@@ -1,0 +1,59 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Blog Posts</title>
+    {% tailwind_css %}
+  </head>
+  <body class="bg-gray-100 text-gray-900">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 text-white p-4 shadow-md">
+      <div class="container mx-auto flex justify-between items-center">
+        <a href="#" class="text-xl font-bold">My Blog</a>
+        <ul class="flex space-x-6">
+          <li><a href="#" class="hover:underline">Home</a></li>
+          <li><a href="#" class="hover:underline">About</a></li>
+          <li><a href="#" class="hover:underline">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Blog List Section -->
+    <section class="container mx-auto py-10">
+      <h1 class="text-3xl font-bold text-center mb-6">All Blog Posts</h1>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Static Example Post 1 -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold">First Blog Post</h2>
+          <p class="text-gray-600 text-sm">By Alice | March 10, 2025</p>
+          <p class="mt-2">This is a short summary of the first post...</p>
+          <a href="#" class="text-blue-600 mt-2 inline-block">Read More →</a>
+        </div>
+
+        <!-- Static Example Post 2 -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold">Second Blog Post</h2>
+          <p class="text-gray-600 text-sm">By Bob | March 11, 2025</p>
+          <p class="mt-2">This is a short summary of the second post...</p>
+          <a href="#" class="text-blue-600 mt-2 inline-block">Read More →</a>
+        </div>
+
+        <!-- Static Example Post 3 -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold">Third Blog Post</h2>
+          <p class="text-gray-600 text-sm">By Charlie | March 12, 2025</p>
+          <p class="mt-2">This is a short summary of the third post...</p>
+          <a href="#" class="text-blue-600 mt-2 inline-block">Read More →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center py-4 mt-10">
+      <p>&copy; 2025 My Blog - All Rights Reserved</p>
+    </footer>
+  </body>
+</html>

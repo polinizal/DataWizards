@@ -1,0 +1,6 @@
+*.pyc
+__pycache__/
+madS/__pycache__/
+madS/migrations/__pycache__/
+myDemo/__pycache__/
+theme/__pycache__/
