@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
-# Create your views here.
 def home(request):
-    return render(request, 'crm/index.html')
+    return render(request, 'crm/index.html')  # Updated path
+
+def blog_list(request):
+    return render(request, 'crm/blog.html')  # Updated path
