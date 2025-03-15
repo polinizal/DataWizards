@@ -73,11 +73,12 @@ class Choice(models.Model):
     def __str__(self):
         return self.text
 
-class Comment(models.Model):
+class Article(models.Model):
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, default=1)  # Set a valid ID
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    references = models.TextField(blank=True)
 
     def clean(self):
         """Ensure comments are only allowed after survey expires."""
@@ -89,4 +90,4 @@ class Comment(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Comment by {self.user} on {self.survey}"
+        return f"Article by {self.user} on {self.survey}"

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Tag, Survey, Question, Choice, Comment
+from .models import CustomUser, Tag, Survey, Question, Choice, Article
 
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
@@ -27,7 +27,7 @@ class ChoiceAdmin(admin.ModelAdmin):
     list_display = ('text', 'question')
     search_fields = ('text',)
 
-@admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
+@admin.register(Article)
+class ArticleAdmin(admin.ModelAdmin):
     list_display = ('user', 'survey', 'created_at')
     search_fields = ('user__username', 'survey__title')
