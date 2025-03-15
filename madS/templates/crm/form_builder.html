@@ -1,0 +1,174 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Form Builder{% endblock %}</title>
+    {% tailwind_css %}
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 text-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="#" class="text-xl font-semibold">Form Builder</a>
+            <div class="flex items-center space-x-6">
+                <a href="#" class="hover:text-blue-400">Home</a>
+                <a href="#" class="hover:text-blue-400">About</a>
+                <a href="#" class="hover:text-blue-400">Contact</a>
+                <a href="{% url 'profile' %}" class="relative group">
+                    <img src="{% static 'profile-icon.png' %}" alt="Profile" class="w-10 h-10 rounded-full border-2 border-white transition duration-300 transform group-hover:scale-105">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="min-h-screen flex justify-center items-center">
+        <div class="max-w-4xl w-full bg-white p-12 rounded-lg shadow-lg mt-6">
+            <h2 class="text-4xl font-bold mb-6 text-center">Create a Form</h2>
+            <input type="text" id="formTitle" placeholder="Form Title" required 
+                class="w-full p-4 border rounded-md mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+            <div id="questions"></div>
+            <div class="flex justify-between mt-8">
+                <button onclick="addQuestion()" class="bg-blue-500 text-white px-6 py-3 rounded-md text-lg">Add Question</button>
+                <button onclick="previewForm()" class="bg-green-500 text-white px-6 py-3 rounded-md text-lg">Preview Form</button>
+                <button onclick="saveForm()" class="bg-purple-500 text-white px-6 py-3 rounded-md text-lg">Save Form</button>
+            </div>
+            <h3 class="text-2xl font-semibold mt-8">Form Preview:</h3>
+            <div id="formPreview" class="mt-6 bg-gray-100 p-8 rounded-md border shadow-md"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-lg">&copy; 2025 Form Builder. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let questions = [];
+
+        function addQuestion() {
+            const index = questions.length;
+            questions.push({ text: "", type: "radio", options: [] });
+
+            const questionDiv = document.createElement("div");
+            questionDiv.className = "question bg-gray-100 p-6 rounded-md mt-6 border shadow";
+            questionDiv.innerHTML = `
+                <input type="text" placeholder="Question text" oninput="updateQuestion(${index}, this.value)"
+                    class="w-full p-3 border rounded-md mb-3 text-lg">
+                <select onchange="changeType(${index}, this.value)"
+                    class="w-full p-3 border rounded-md text-lg">
+                    <option value="radio">Multiple Choice</option>
+                    <option value="checkbox">Checkbox</option>
+                </select>
+                <button onclick="removeQuestion(${index})" class="bg-red-500 text-white px-4 py-2 rounded-md mt-3">Remove</button>
+                <div class="options mt-3" id="options-${index}">
+                    <button onclick="addOption(${index})" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-3">Add Option</button>
+                    <ul id="option-list-${index}" class="mt-3"></ul>
+                </div>
+            `;
+            document.getElementById("questions").appendChild(questionDiv);
+        }
+
+        function updateQuestion(index, value) {
+            questions[index].text = value;
+        }
+
+        function changeType(index, type) {
+            questions[index].type = type;
+        }
+
+        function addOption(index) {
+            const optionText = prompt("Enter option text:");
+            if (optionText) {
+                questions[index].options.push(optionText);
+                const optionList = document.getElementById(`option-list-${index}`);
+                const li = document.createElement("li");
+                li.className = "p-3 bg-gray-200 rounded-md mt-2 border text-lg";
+                li.textContent = optionText;
+                optionList.appendChild(li);
+            }
+        }
+
+        function removeQuestion(index) {
+            questions.splice(index, 1);
+            document.getElementById("questions").children[index].remove();
+        }
+
+        function previewForm() {
+            const previewDiv = document.getElementById("formPreview");
+            previewDiv.innerHTML = "";
+            
+            const title = document.createElement("h3");
+            title.textContent = document.getElementById("formTitle").value;
+            title.className = "text-2xl font-bold mb-6 text-center";
+            previewDiv.appendChild(title);
+
+            questions.forEach((q, i) => {
+                const questionContainer = document.createElement("div");
+                questionContainer.className = "bg-white p-6 rounded-md shadow-lg mt-6 border";
+
+                const questionText = document.createElement("p");
+                questionText.className = "font-medium text-xl";
+                questionText.textContent = `${i + 1}. ${q.text}`;
+                questionContainer.appendChild(questionText);
+
+                q.options.forEach(option => {
+                    const label = document.createElement("label");
+                    label.className = "block mt-3 text-lg";
+                    const input = document.createElement("input");
+                    input.type = q.type;
+                    input.name = `q${i}`;
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(" " + option));
+                    questionContainer.appendChild(label);
+                });
+                previewDiv.appendChild(questionContainer);
+            });
+        }
+
+        function saveForm() {
+            const formTitle = document.getElementById("formTitle").value.trim();
+        
+            if (!formTitle) {
+                alert("Form title is required!");
+                return;
+            }
+        
+            fetch("/save-form/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCSRFToken(),
+                },
+                body: JSON.stringify({ title: formTitle, questions }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert("Form saved successfully!");
+                    window.location.href = "/saved-forms/";
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+        
+        // Function to get CSRF Token
+        function getCSRFToken() {
+            return document.cookie.split("; ")
+                .find(row => row.startsWith("csrftoken="))
+                ?.split("=")[1];
+        }
+        
+        
+    </script>
+</body>
+</html>
+
+
+
+

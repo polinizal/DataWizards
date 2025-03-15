@@ -1,0 +1,48 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Saved Forms</title>
+    {% tailwind_css %}
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <nav class="bg-gray-800 text-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="#" class="text-xl font-semibold">Form Builder</a>
+            <div class="flex items-center space-x-6">
+                <a href="{% url 'form_list' %}" class="hover:text-blue-400">Saved Forms</a>
+                <a href="#" class="hover:text-blue-400">About</a>
+                <a href="#" class="hover:text-blue-400">Contact</a>
+                <a href="{% url 'profile' %}" class="relative group">
+                    <img src="{% static 'profile-icon.png' %}" alt="Profile" class="w-10 h-10 rounded-full border-2 border-white transition duration-300 transform group-hover:scale-105">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="min-h-screen flex justify-center items-center">
+        <div class="max-w-4xl w-full bg-white p-12 rounded-lg shadow-lg mt-6">
+            <h2 class="text-3xl font-bold mb-6 text-center">Saved Forms</h2>
+            <ul class="space-y-4">
+                {% for form in forms %}
+                    <li class="bg-gray-100 p-4 rounded-md shadow-md flex justify-between">
+                        <span class="text-lg font-semibold">{{ form.title }}</span>
+                        <a href="{% url 'view_form' form.id %}" class="bg-blue-500 text-white px-4 py-2 rounded-md">View</a>
+                    </li>
+                {% empty %}
+                    <p class="text-gray-500 text-center">No forms saved yet.</p>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-lg">&copy; 2025 Form Builder. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
