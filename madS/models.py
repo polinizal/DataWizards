@@ -83,3 +83,31 @@ class Image(models.Model):
 
     def __str__(self):
         return f"Image for {self.blog.title}"
+
+class Form(models.Model):
+    title = models.CharField(max_length=255)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="forms")
+    created_at = models.DateTimeField(default=now)
+
+    def __str__(self):
+        return self.title
+
+class Question(models.Model):
+    QUESTION_TYPES = [
+        ("radio", "Multiple Choice"),
+        ("checkbox", "Checkbox"),
+    ]
+
+    form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="questions")
+    text = models.CharField(max_length=500)
+    question_type = models.CharField(max_length=50, choices=QUESTION_TYPES)
+    
+    def __str__(self):
+        return self.text
+
+class Option(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="options")
+    text = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.text
