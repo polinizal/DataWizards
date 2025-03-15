@@ -1,85 +1,104 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.utils.timezone import now
-from django.db.models import Avg
+from django.contrib.auth.models import AbstractUser
+from django.utils.timezone import now, timedelta
+from django.core.exceptions import ValidationError
 
-# Custom User Manager
-class CustomUserManager(BaseUserManager):
-    def create_user(self, name, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError("Email is required")
-        email = self.normalize_email(email)
+class CustomUser(AbstractUser):
+    tags = models.ManyToManyField('Tag', blank=True)
+    bio = models.TextField(blank=True)
 
-        user = self.model(name=name, email=email, **extra_fields)
-        user.set_password(password)  # Hash the password
-        user.save(using=self._db)
-        return user
+    groups = models.ManyToManyField(
+        "auth.Group",
+        related_name="customuser_set",  # Avoids conflict with auth.User.groups
+        blank=True,
+    )
+    
+    user_permissions = models.ManyToManyField(
+        "auth.Permission",
+        related_name="customuser_permissions_set",  # Avoids conflict with auth.User.user_permissions
+        blank=True,
+    )
 
-    def create_superuser(self, name, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_superuser", True)
+    def __str__(self):
+        return self.username
 
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
-
-        return self.create_user(name, email, password, **extra_fields)
-
-# Custom User Model
-
-class User(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
-    is_superuser = models.BooleanField(default=False)
-
-    groups = models.ManyToManyField(Group, related_name="custom_users", blank=True)
-    user_permissions = models.ManyToManyField(Permission, related_name="custom_users_permissions", blank=True)
-
-    objects = CustomUserManager()
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
-
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    
     def __str__(self):
         return self.name
 
-# Science Category Model
-class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+class Survey(models.Model):
+    title = models.CharField(max_length=200)
+    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="surveys")
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    description = models.TextField()
+    tags = models.ManyToManyField(Tag)
+    is_active = models.BooleanField(default=True)
 
-    def __str__(self):
-        return self.name
+    def save(self, *args, **kwargs):
+        if not self.expires_at:  # Only set if not manually provided
+            self.expires_at = now() + timedelta(weeks=1)
+        super().save(*args, **kwargs)
 
-# Blog Model (Now with Categories)
-class Blog(models.Model):
-    title = models.CharField(max_length=255)
-    content = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blogs")
-    created_at = models.DateTimeField(default=now)
-    video = models.FileField(upload_to="blog_videos/", null=True, blank=True)
-    categories = models.ManyToManyField(Category, related_name="blogs")  # Many-to-many relationship
-
-    def get_average_grade(self):
-        return self.reviews.aggregate(Avg("grade"))["grade__avg"] or 0.0  # More efficient
+    def check_status(self):
+        """Deactivate survey when expired."""
+        if now() > self.expires_at and self.is_active:
+            self.is_active = False
+            self.save()
+        return self.is_active
 
     def __str__(self):
         return self.title
 
-# Review Model
-class Review(models.Model):
+class Question(models.Model):
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name="questions")
+    text = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.text
+
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="choices")
+    text = models.CharField(max_length=200)
+    votes = models.ManyToManyField(CustomUser, blank=True)
+
+    def vote(self, user):
+        """Ensures a user votes only once per question."""
+        if self.question.responses.filter(user=user).exists():
+            raise ValidationError("You have already voted on this question.")
+        self.votes.add(user)
+
+    def __str__(self):
+        return self.text
+
+class Response(models.Model):
+    """Tracks user votes to prevent multiple voting."""
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="responses")
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("user", "question")  # Ensures one vote per question per user
+
+    def __str__(self):
+        return f"{self.user.username} -> {self.choice.text}"
+
+class Comment(models.Model):
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, default=1)  # Set a valid ID
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     text = models.TextField()
-    grade = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name="reviews")
-    created_at = models.DateTimeField(default=now)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        """Ensure comments are only allowed after survey expires."""
+        if self.survey.is_active:
+            raise ValidationError("You cannot comment until the survey has ended.")
+
+    def save(self, *args, **kwargs):
+        self.clean()  # Validate before saving
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Review by {self.author.name} - {self.grade}/5"
-
-# Image Model
-class Image(models.Model):
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="blog_images/")
-
-    def __str__(self):
-        return f"Image for {self.blog.title}"
+        return f"Comment by {self.user} on {self.survey}"
