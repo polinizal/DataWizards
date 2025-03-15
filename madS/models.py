@@ -62,28 +62,16 @@ class Question(models.Model):
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="choices")
     text = models.CharField(max_length=200)
-    votes = models.ManyToManyField(CustomUser, blank=True)
+    votes = models.ManyToManyField(CustomUser, blank=True)  # Stores users who voted for this choice
 
     def vote(self, user):
         """Ensures a user votes only once per question."""
-        if self.question.responses.filter(user=user).exists():
+        if Choice.objects.filter(question=self.question, votes=user).exists():
             raise ValidationError("You have already voted on this question.")
         self.votes.add(user)
 
     def __str__(self):
         return self.text
-
-class Response(models.Model):
-    """Tracks user votes to prevent multiple voting."""
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="responses")
-    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ("user", "question")  # Ensures one vote per question per user
-
-    def __str__(self):
-        return f"{self.user.username} -> {self.choice.text}"
 
 class Comment(models.Model):
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, default=1)  # Set a valid ID
