@@ -1,0 +1,89 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>First Blog Post</title>
+    {% tailwind_css %}
+</head>
+<body class="bg-[#F8F5F2] text-gray-900 m-0 p-0 flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-[#265073] text-white py-3 shadow-md fixed top-0 left-0 right-0 w-full z-50">
+        <div class="container mx-auto flex justify-between items-center px-6">
+            <a href="#" class="text-xl font-semibold tracking-wide text-white">My Blog</a>
+
+            <ul class="flex space-x-6 text-lg font-bold">
+                <li><a href="#" class="hover:text-[#9AD0C2]">Home</a></li>
+                <li><a href="#" class="hover:text-[#9AD0C2]">About</a></li>
+                <li><a href="#" class="hover:text-[#9AD0C2]">Contact</a></li>
+            </ul>
+
+            <a href="{% url 'profile' %}" class="relative group">
+                <img src="{% static 'profile-icon.png' %}" alt="Profile" class="w-9 h-9 rounded-full border-2 border-white transition duration-300 transform group-hover:scale-105">
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 pt-20">
+        <section class="container mx-auto py-8 px-6 md:px-0">
+            <div class="bg-white p-8 rounded-lg shadow-md max-w-5xl mx-auto border border-gray-200 relative"> <!-- Increased width with max-w-5xl -->
+                <h1 class="text-3xl font-bold text-[#265073]">First Blog Post</h1>
+                <p class="text-gray-600 text-sm mt-1">By Alice | March 10, 2025</p>
+                <hr class="my-4 border-gray-300">
+                <div class="text-gray-800 leading-relaxed text-left">
+                    <p class="mb-4">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                        Vestibulum et ligula in nunc bibendum fringilla a eu lectus. 
+                        Nulla facilisi. Suspendisse potenti. Etiam nec odio vestibulum 
+                        est mattis efficitur eget nulla. Nulla facilisi.
+                    </p>
+                    <p>
+                        Curabitur feugiat, tortor non consequat finibus, justo nulla 
+                        condimentum urna, at tristique est risus a nunc. Integer nec 
+                        odio. Praesent libero. Sed cursus ante dapibus diam.
+                    </p>
+                </div>
+
+                <!-- Like & Dislike Buttons (Bottom Right Corner) -->
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button class="bg-[#2D9596] text-white px-4 py-2 text-sm rounded-lg flex items-center space-x-2 hover:bg-[#265073] transition">
+                        <span>👍</span> <span>Like</span>
+                    </button>
+                    <button class="bg-red-500 text-white px-4 py-2 text-sm rounded-lg flex items-center space-x-2 hover:bg-red-600 transition">
+                        <span>👎</span> <span>Dislike</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comment Box -->
+            <div class="bg-white p-6 rounded-lg shadow-md max-w-5xl mx-auto mt-6 border border-gray-200">
+                <h2 class="text-xl font-bold text-[#265073] mb-4">Leave a Comment</h2>
+                <textarea class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-[#2D9596]" rows="4" placeholder="Write your comment..."></textarea>
+                <button class="mt-3 bg-[#2D9596] text-white px-4 py-2 rounded-lg hover:bg-[#265073] transition">
+                    Post Comment
+                </button>
+            </div>
+
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#2D9596] text-white text-center py-3 text-sm w-full">
+        <p>&copy; 2025 My Blog - All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>
+    
+
+
+
+
+
+
+
+
+
