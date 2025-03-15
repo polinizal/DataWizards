@@ -1,0 +1,174 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    {% tailwind_css %}
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            font-family: "Raleway", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #show-signup {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #222;
+            background: #f5f5f5;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            border-radius: 5px;
+            position: absolute;
+            top: 20px;
+        }
+
+        #signup-popup {
+            position: absolute;
+            top: -150%;
+            left: 50%;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1.25);
+            width: 380px;
+            padding: 20px 30px;
+            background: #fff;
+            box-shadow: 2px 2px 5px 5px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            transition: top 0ms ease-in-out 200ms, opacity 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+        }
+
+        #signup-popup.active {
+            top: 50%;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            transition: top 0ms ease-in-out 0ms, opacity 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
+        }
+
+        #signup-popup .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background: #888;
+            color: #eee;
+            text-align: center;
+            line-height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #signup-popup .form h2 {
+            text-align: center;
+            color: #222;
+            margin: 10px 0px 20px;
+            font-size: 25px;
+        }
+
+        #signup-popup .form .form-element {
+            margin: 15px 0px;
+        }
+
+        #signup-popup .form .form-element label {
+            font-size: 14px;
+            color: #222;
+        }
+
+        #signup-popup .form .form-element input {
+            margin-top: 5px;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            outline: none;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+        }
+
+        #signup-popup .form .form-element button {
+            width: 100%;
+            height: 40px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: #222;
+            color: #f5f5f5;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #signup-popup .form .form-element p {
+            text-align: center;
+            font-size: 15px;
+            color: #222;
+        }
+
+        #signup-popup .form .form-element p a {
+            color: #1a79ca;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        #signup-popup .form .form-element p a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sign Up Popup -->
+    <div class="popup" id="signup-popup">
+        <div class="close-btn" id="close-signup">&times;</div>
+        <div class="form">
+            <h2>Sign Up</h2>
+            <div class="form-element">
+                <label for="signup-email">Email</label>
+                <input type="text" id="signup-email" placeholder="Enter email">
+            </div>
+            <div class="form-element">
+                <label for="signup-username">Username</label>
+                <input type="text" id="signup-username" placeholder="Enter username">
+            </div>
+            <div class="form-element">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" placeholder="Enter password">
+            </div>
+            <div class="form-element">
+                <button>Sign Up</button>
+            </div>
+            <div class="form-element">
+                <p>Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector("#signup-popup").classList.add("active");
+
+        document.querySelector("#close-signup").addEventListener("click", function(){
+            document.querySelector("#signup-popup").classList.remove("active");
+        });
+
+        document.querySelector("#switch-to-login").addEventListener("click", function(){
+            document.querySelector("#signup-popup").classList.remove("active");
+            if (document.querySelector("#login-popup")) {
+                document.querySelector("#login-popup").classList.add("active");
+            }
+        });
+    </script>
+</body>
+</html>
