@@ -19,7 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('madS.urls')),  # This now includes both '/' and '/blog/'
+    path('', include('madS.urls')),
     path("__reload__/", include("django_browser_reload.urls")),  
 ]
 

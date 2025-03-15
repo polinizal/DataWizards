@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>All Blogs</h2>
+    <a href="{% url 'blog_create' %}">Create New Blog</a>
+    <ul>
+        {% for blog in blogs %}
+            <li>
+                <a href="{% url 'blog_detail' blog.id %}">{{ blog.title }}</a>
+                <a href="{% url 'blog_update' blog.id %}">Edit</a>
+                <form method="POST" action="{% url 'blog_delete' blog.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
