@@ -128,7 +128,7 @@ def survey_builder(request):
     })
 
 
-@login_required  # Ensure only logged-in users can create surveys
+#@login_required  # Ensure only logged-in users can create surveys
 def save_survey(request):
     if request.method == "POST":
         title = request.POST.get("title")
