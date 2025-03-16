@@ -90,21 +90,26 @@
         </div>
     </header>
 
-    <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
-        <div class="w-full max-w-3xl">
-            <div class="relative w-full flex items-center">
-                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg">🔍</span>
-                <input type="text" placeholder="Search..." class="p-4 pl-10 w-full text-lg border border-[#AAAAAA] rounded-lg text-black shadow-md focus:ring-2 focus:ring-[#9AD0C2] focus:border-transparent" id="search-bar">
-            </div>
+    <form method="GET" action="{% url 'view_articles' %}" class="w-full max-w-3xl mt-6">
+        <div class="relative w-full flex items-center">
+            <input 
+                type="text" 
+                name="q" 
+                value="{{ query }}" 
+                placeholder="Search articles by title or tag..." 
+                class="p-4 w-full text-lg border border-[#AAAAAA] rounded-lg text-black shadow-md focus:ring-2 focus:ring-[#9AD0C2] focus:border-transparent"
+            >
+            <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-700 text-lg">🔍</button>
         </div>
+    </form>
         
         <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
             <h2 class="text-5xl font-bold text-[#ECF4D6] mt-10 tracking-wide">Our Most Recent Articles</h2>
     
             <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full px-10 max-w-6xl">
                 {% for article in articles %}
-                <div class="article-card" onclick="openModal('{{ article.survey.title }}', `{{ article.text|slice:120 }}...`)">
-                    <h3 class="text-3xl font-semibold">{{ article.survey.title }}</h3>
+                <div class="article-card" onclick="openModal('{{ article.title }}', `{{ article.text|slice:120 }}...`)">
+                    <h3 class="text-3xl font-semibold">{{ article.title }}</h3>
                     <p class="text-lg text-gray-700">{{ article.text|slice:120 }}...</p>
                     <div class="tags-group">
                         {% for tag in article.survey.tags.all %}

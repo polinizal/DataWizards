@@ -74,6 +74,7 @@ class Choice(models.Model):
         return self.text
 
 class Article(models.Model):
+    title = models.CharField(max_length=255, default="Test")
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, default=1)  # Set a valid ID
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     text = models.TextField()

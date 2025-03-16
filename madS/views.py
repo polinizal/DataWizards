@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Survey, Choice, Article
 import json
-
+from django.db.models import Q
 
 def home(request):
     articles = Article.objects.select_related('survey').prefetch_related('survey__tags').all()
@@ -22,8 +22,16 @@ def survey_results(request, survey_id):
         "chart_data_json": json.dumps(chart_data)
     })
 def view_articles(request):
+    query = request.GET.get('q', '')  # Get search query from URL parameters
     articles = Article.objects.select_related('survey').prefetch_related('survey__tags').all()
-    return render(request, 'crm/view_articles.html', {'articles': articles})  # Use the correct template
+
+    if query:
+        # Use Q objects to properly combine unique (title) and non-unique (tags) queries
+        articles = articles.filter(
+            Q(title__icontains=query) | Q(survey__tags__name__icontains=query)
+        ).distinct()  # Remove duplicates if matches appear in title & tags
+
+    return render(request, 'crm/view_articles.html', {'articles': articles, 'query': query})
 def blogs(request):
     return render(request, 'crm/base.html')
 
