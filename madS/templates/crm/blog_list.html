@@ -17,10 +17,12 @@
           <li><a href="#" class="hover:underline">About</a></li>
           <li><a href="#" class="hover:underline">Contact</a></li>
           {% if user.is_authenticated %}
-          <li><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+          <li>
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          </li>
           {% else %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'login'%}">Login</a>
+            <a class="nav-link" href="{% url 'register'%}">Register</a>
           </li>
           {% endif %}
         </ul>
