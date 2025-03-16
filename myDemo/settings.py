@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'madS',
+    'members',
     'django_browser_reload',
+    
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -69,7 +71,7 @@ ROOT_URLCONF = 'myDemo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-         'DIRS': [os.path.join(BASE_DIR, 'madS/templates')],  # Add this linepython manage.py runserver
+         'DIRS': [],  # Add this linepython manage.py runserver
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
