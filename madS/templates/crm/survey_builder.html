@@ -1,0 +1,172 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Survey Builder</title>
+    {% tailwind_css %}
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <nav class="bg-gray-800 text-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="#" class="text-xl font-semibold">Survey Builder</a>
+        </div>
+    </nav>
+
+    <main class="min-h-screen flex justify-center items-center">
+        <div class="max-w-4xl w-full bg-white p-12 rounded-lg shadow-lg mt-6">
+            <h2 class="text-4xl font-bold mb-6 text-center">Create a Survey</h2>
+
+            <form method="POST" action="{% url 'save_survey' %}" id="survey-form">
+                {% csrf_token %}
+
+                <input type="text" name="title" id="surveyTitle" placeholder="Survey Title" required 
+                    class="w-full p-4 border rounded-md mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+                    value="{{ survey_title|default:'' }}">
+
+                <div id="questions">
+                    {% for question_key, question_text in questions_data.items %}
+                        {% if "question_text_" in question_key %}
+                            <div class="question bg-gray-100 p-6 rounded-md mt-6 border shadow">
+                                <input type="text" name="{{ question_key }}" value="{{ question_text }}" placeholder="Question text"
+                                    class="w-full p-3 border rounded-md mb-3 text-lg">
+
+                                <select name="question_type_{{ forloop.counter0 }}" class="w-full p-3 border rounded-md text-lg">
+                                    <option value="radio">Multiple Choice</option>
+                                    <option value="checkbox">Checkbox</option>
+                                </select>
+
+                                <div class="options mt-3">
+                                    <button type="button" onclick="addOption({{ forloop.counter0 }})" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-3">
+                                        Add Option
+                                    </button>
+                                    <ul id="option-list-{{ forloop.counter0 }}" class="mt-3">
+                                        {% for choice_key, choice_text in questions_data.items %}
+                                            {% if "choice_" in choice_key and choice_key|slice:9 == question_key|slice:13 %}
+                                                <li>
+                                                    <input type="text" name="{{ choice_key }}" value="{{ choice_text }}" placeholder="Option"
+                                                        class="p-3 bg-gray-200 rounded-md mt-2 border text-lg w-full">
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="flex justify-between mt-8">
+                    <button type="button" onclick="addQuestion()" class="bg-blue-500 text-white px-6 py-3 rounded-md text-lg">
+                        Add Question
+                    </button>
+                    <button type="button" onclick="previewSurvey()" class="bg-green-500 text-white px-6 py-3 rounded-md text-lg">
+                        Preview Survey
+                    </button>
+                    <button type="submit" class="bg-purple-500 text-white px-6 py-3 rounded-md text-lg">
+                        Save Survey
+                    </button>
+                </div>
+            </form>
+
+            <h3 class="text-2xl font-semibold mt-8">Survey Preview:</h3>
+            <div id="surveyPreview" class="mt-6 bg-gray-100 p-8 rounded-md border shadow-md"></div>
+        </div>
+    </main>
+
+    <script>
+        let questionCount = document.querySelectorAll(".question").length || 0;
+
+        function addQuestion() {
+            const index = questionCount++;
+            const questionDiv = document.createElement("div");
+            questionDiv.classList.add("question", "bg-gray-100", "p-6", "rounded-md", "mt-6", "border", "shadow");
+
+            questionDiv.innerHTML = `
+                <input type="text" name="question_text_${index}" placeholder="Question text" required 
+                    class="w-full p-3 border rounded-md mb-3 text-lg">
+                
+                <select name="question_type_${index}" class="w-full p-3 border rounded-md text-lg">
+                    <option value="radio">Multiple Choice</option>
+                    <option value="checkbox">Checkbox</option>
+                </select>
+
+                <div class="options mt-3">
+                    <button type="button" onclick="addOption(${index})" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-3">
+                        Add Option
+                    </button>
+                    <ul id="option-list-${index}" class="mt-3"></ul>
+                </div>
+            `;
+
+            document.getElementById("questions").appendChild(questionDiv);
+        }
+
+        function addOption(questionIndex) {
+            const optionList = document.getElementById(`option-list-${questionIndex}`);
+            const optionCount = optionList.children.length;
+            const optionInput = document.createElement("li");
+            optionInput.innerHTML = `
+                <input type="text" name="choice_${questionIndex}_${optionCount}" placeholder="Option" required 
+                    class="p-3 bg-gray-200 rounded-md mt-2 border text-lg w-full">
+            `;
+            optionList.appendChild(optionInput);
+        }
+
+        function previewSurvey() {
+            const previewDiv = document.getElementById("surveyPreview");
+            previewDiv.innerHTML = "<h3 class='text-2xl font-bold mb-6 text-center'>Survey Preview</h3>";
+
+            const title = document.getElementById("surveyTitle").value.trim();
+            if (!title) {
+                alert("Please enter a survey title before previewing.");
+                return;
+            }
+
+            const titleElement = document.createElement("h3");
+            titleElement.className = "text-2xl font-bold mb-6 text-center";
+            titleElement.textContent = title;
+            previewDiv.appendChild(titleElement);
+
+            const questions = document.querySelectorAll(".question");
+            questions.forEach((q, i) => {
+                const questionContainer = document.createElement("div");
+                questionContainer.className = "bg-white p-6 rounded-md shadow-lg mt-6 border";
+
+                const questionText = q.querySelector("input[type='text']").value;
+                const questionElement = document.createElement("p");
+                questionElement.className = "font-medium text-xl";
+                questionElement.textContent = `${i + 1}. ${questionText}`;
+                questionContainer.appendChild(questionElement);
+
+                const options = q.querySelectorAll(".options ul input[type='text']");
+                options.forEach((opt) => {
+                    const label = document.createElement("label");
+                    label.className = "block mt-3 text-lg";
+
+                    const input = document.createElement("input");
+                    input.type = q.querySelector("select").value;
+                    input.name = `q${i}`;
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(" " + opt.value));
+                    questionContainer.appendChild(label);
+                });
+
+                previewDiv.appendChild(questionContainer);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
