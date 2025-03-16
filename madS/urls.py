@@ -2,7 +2,7 @@ from django.urls import path, include
 from.import views
 from .views import survey_results
 urlpatterns = [
-  path('', views.home, name='home'),
+  path('home1', views.home, name='home'),
   path('blogs/', views.blogs, name='blogs'),
   path('blog-list/', views.bloglist, name='blog-list'),
   path('blog-details/', views.blog_details, name='blog-details'),
@@ -20,5 +20,5 @@ urlpatterns = [
   path('account/', views.account, name='account'),
   path('myArticles/', views.myArticles, name='myArticles'),
   path('contribute/', views.contribute, name='contribute'),
-  path('view-articles/', views.view_articles, name='view_articles'),
+  path('', views.view_articles, name='view_articles'),
 ]
