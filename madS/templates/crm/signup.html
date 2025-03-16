@@ -15,7 +15,7 @@
         }
 
         body {
-            background: #ffffff;
+            background: linear-gradient(to bottom, #1E2F30, #101618);
             font-family: "Raleway", sans-serif;
             display: flex;
             flex-direction: column;
@@ -24,42 +24,19 @@
             height: 100vh;
         }
 
-        #show-signup {
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #222;
-            background: #f5f5f5;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            border-radius: 5px;
+        .popup {
             position: absolute;
-            top: 20px;
-        }
-
-        #signup-popup {
-            position: absolute;
-            top: -150%;
+            top: 50%;
             left: 50%;
-            opacity: 0;
-            transform: translate(-50%, -50%) scale(1.25);
+            transform: translate(-50%, -50%);
             width: 380px;
             padding: 20px 30px;
             background: #fff;
             box-shadow: 2px 2px 5px 5px rgba(0, 0, 0, 0.15);
             border-radius: 10px;
-            transition: top 0ms ease-in-out 200ms, opacity 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
         }
 
-        #signup-popup.active {
-            top: 50%;
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-            transition: top 0ms ease-in-out 0ms, opacity 200ms ease-in-out 0ms, transform 200ms ease-in-out 0ms;
-        }
-
-        #signup-popup .close-btn {
+        .popup .close-btn {
             position: absolute;
             top: 10px;
             right: 10px;
@@ -74,23 +51,23 @@
             font-size: 18px;
         }
 
-        #signup-popup .form h2 {
+        .popup .form h2 {
             text-align: center;
             color: #222;
             margin: 10px 0px 20px;
             font-size: 25px;
         }
 
-        #signup-popup .form .form-element {
+        .popup .form .form-element {
             margin: 15px 0px;
         }
 
-        #signup-popup .form .form-element label {
+        .popup .form .form-element label {
             font-size: 14px;
             color: #222;
         }
 
-        #signup-popup .form .form-element input {
+        .popup .form .form-element input {
             margin-top: 5px;
             display: block;
             width: 100%;
@@ -100,7 +77,7 @@
             border-radius: 5px;
         }
 
-        #signup-popup .form .form-element button {
+        .popup .form .form-element button {
             width: 100%;
             height: 40px;
             border: none;
@@ -112,25 +89,25 @@
             cursor: pointer;
         }
 
-        #signup-popup .form .form-element p {
+        .popup .form .form-element p {
             text-align: center;
             font-size: 15px;
             color: #222;
         }
 
-        #signup-popup .form .form-element p a {
+        .popup .form .form-element p a {
             color: #1a79ca;
             text-decoration: none;
             font-weight: 600;
         }
 
-        #signup-popup .form .form-element p a:hover {
+        .popup .form .form-element p a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <!-- Sign Up Popup -->
+
     <div class="popup" id="signup-popup">
         <div class="close-btn" id="close-signup">&times;</div>
         <div class="form">
@@ -151,24 +128,23 @@
                 <button>Sign Up</button>
             </div>
             <div class="form-element">
-                <p>Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+                <p>Already have an account? <a href="{% url 'login' %}">Log in</a>
+                </p>
             </div>
         </div>
     </div>
-
     <script>
-        document.querySelector("#signup-popup").classList.add("active");
-
-        document.querySelector("#close-signup").addEventListener("click", function(){
-            document.querySelector("#signup-popup").classList.remove("active");
-        });
-
-        document.querySelector("#switch-to-login").addEventListener("click", function(){
-            document.querySelector("#signup-popup").classList.remove("active");
-            if (document.querySelector("#login-popup")) {
-                document.querySelector("#login-popup").classList.add("active");
-            }
-        });
-    </script>
+     
+            document.querySelector(".popup .form .form-element button").addEventListener("click", function(event) {
+                window.location.href = "{% url 'userDataCollector' %}"; 
+            });
+      
+        
+            document.getElementById("close-signup").addEventListener("click", function() {
+                window.location.href = "{% url 'index' %}"; 
+            });
+        </script>
+        
+        
 </body>
 </html>
