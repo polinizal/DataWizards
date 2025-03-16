@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Wizards - Polls</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .poll-card {
+            background: white;
+            color: black;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .poll-card:hover { transform: scale(1.02); }
+        .tags-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag { background: #2D9596; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9rem; }
+        .vote-btn {
+            background: #2D9596;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        .vote-btn:hover { background: #265073; }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[#1E2F30] to-[#101618] text-[#F5F5F5] h-screen flex flex-col">
+    <header class="flex items-center p-6 bg-[#101618] shadow-lg text-xl font-semibold">
+        <div class="flex-1">
+            <a href="{% url 'home' %}">
+                <h1 class="font-extrabold text-[#9AD0C2] text-4xl text-left tracking-wide hover:text-[#F5F5F5] transition duration-300">
+                    Data Wizard
+                </h1>
+            </a>
+        </div>
+        
+        <nav class="flex-1 flex justify-center space-x-8">
+            <a href="{% url 'polls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Polls</a>
+            <a href="{% url 'articles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Articles</a>
+            <a href="{% url 'myPolls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Polls</a>
+            <a href="{% url 'myArticles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Articles</a>
+        </nav>
+        <div class="flex-1 flex justify-end space-x-4">
+            <a href="{% url 'contribute' %}">
+                <button class="bg-[#2D9596] text-white px-4 py-2 rounded-lg hover:bg-[#265073] transition duration-300">
+                    Contribute
+                </button>
+            </a>
+            <a href="{% url 'account' %}">
+                <button class="p-2 rounded-full overflow-hidden w-12 h-12 border-2 border-[#9AD0C2]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1508/1508843.png" alt="User Icon" class="w-full h-full">
+                </button>
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
+        <h2 class="text-5xl font-bold text-[#ECF4D6] mt-10 tracking-wide">Vote on Our Latest Polls</h2>
+
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full px-10 max-w-6xl">
+            <script>
+                const polls = [
+                    { 
+                        question: "Should AI Be Regulated?", 
+                        options: ["Yes, strict regulations are needed", "No, AI should develop freely", "Maybe, but with minimal rules"], 
+                        tags: ["Technology", "AI", "Ethics"] 
+                    },
+                    { 
+                        question: "Is Climate Change Man-Made?", 
+                        options: ["Yes, humans are responsible", "No, it's a natural process", "Not sure"], 
+                        tags: ["Science", "Climate", "Environment"] 
+                    },
+                    { 
+                        question: "Would You Move to Mars?", 
+                        options: ["Yes, if safe and affordable", "No, Earth is better", "Maybe in 50 years"], 
+                        tags: ["Space", "Exploration", "Future"] 
+                    },
+                    { 
+                        question: "Should Homework Be Banned?", 
+                        options: ["Yes, students need more free time", "No, homework is essential", "Depends on the subject"], 
+                        tags: ["Education", "Students", "Debate"] 
+                    },
+                    { 
+                        question: "Should We Have a Universal Basic Income?", 
+                        options: ["Yes, it helps reduce poverty", "No, people need to work", "Maybe, but only in some cases"], 
+                        tags: ["Economy", "Politics", "Future"] 
+                    },
+                    { 
+                        question: "Are Video Games a Sport?", 
+                        options: ["Yes, esports require skill", "No, traditional sports are different", "Not sure"], 
+                        tags: ["Gaming", "Sports", "Culture"] 
+                    }
+                ];
+
+                document.write(polls.map((poll, index) => `
+                    <div class="poll-card">
+                        <h3 class="text-2xl font-semibold">${poll.question}</h3>
+                        <form id="poll-${index}">
+                            ${poll.options.map((option, optIndex) => `
+                                <label class="block mt-2 text-lg">
+                                    <input type="radio" name="vote-${index}" value="${option}" class="mr-2">
+                                    ${option}
+                                </label>
+                            `).join('')}
+                            <button type="button" class="vote-btn" onclick="submitVote(${index})">Vote</button>
+                        </form>
+                        <div class="tags-group">
+                            ${poll.tags.map(tag => `<div class="tag">${tag}</div>`).join('')}
+                        </div>
+                    </div>
+                `).join(''));
+            </script>
+        </div>
+    </main>
+
+    <script>
+        function submitVote(pollIndex) {
+            const form = document.getElementById(`poll-${pollIndex}`);
+            const selectedOption = form.querySelector(`input[name="vote-${pollIndex}"]:checked`);
+            
+            if (selectedOption) {
+                alert(`Thank you for voting: "${selectedOption.value}"`);
+            } else {
+                alert("Please select an option before voting.");
+            }
+        }
+
+       
+    </script>
+</body>
+</html>

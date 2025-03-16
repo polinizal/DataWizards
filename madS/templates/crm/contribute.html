@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Wizards - Contribute</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color:#222;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #AAAAAA;
+            border-radius: 5px;
+            font-size: 1rem;
+            color: black;
+        }
+        .submit-btn {
+            background: #2D9596;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        .submit-btn:hover { background: #265073; }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #AAAAAA;
+            border-radius: 5px;
+            font-size: 1rem;
+            color: black !important; /* Forces text to always be black */
+            background-color: white !important; /* Ensures background remains white */
+            caret-color: black; /* Ensures cursor is visible */
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #2D9596;
+            background-color: white !important;
+            color: black !important; /* Ensures text stays black when typing */
+        }
+        
+        ::placeholder {
+            color: #666 !important; /* Darker placeholder text */
+        }
+        
+        input:disabled, textarea:disabled {
+            color: black !important;
+            opacity: 0.6;
+            background-color: #f5f5f5 !important; /* Light gray for disabled inputs */
+        }
+        
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[#1E2F30] to-[#101618] text-[#F5F5F5] h-screen flex flex-col items-center">
+
+    <!-- Header -->
+    <header class="flex items-center p-6 bg-[#101618] shadow-lg text-xl font-semibold w-full">
+        <a href="{% url 'home' %}" class="flex-1">
+            <h1 class="font-extrabold text-[#9AD0C2] text-4xl text-left tracking-wide hover:text-[#F5F5F5] transition duration-300">
+                Data Wizard
+            </h1>
+        </a>
+        <nav class="flex-1 flex justify-center space-x-8">
+            <a href="{% url 'polls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Polls</a>
+            <a href="{% url 'articles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Articles</a>
+            <a href="{% url 'myPolls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Polls</a>
+            <a href="{% url 'myArticles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Articles</a>
+        </nav>
+        <div class="flex-1 flex justify-end space-x-4">
+            <a href="{% url 'account' %}">
+                <button class="p-2 rounded-full overflow-hidden w-12 h-12 border-2 border-[#9AD0C2]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1508/1508843.png" alt="User Icon" class="w-full h-full">
+                </button>
+            </a>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
+        <h2 class="text-5xl font-bold text-[#ECF4D6] mt-10 tracking-wide">Contribute to Data Wizard</h2>
+        <p class="text-lg text-[#F5F5F5] mt-4">Create a new poll or article to share with the community.</p>
+
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-10 w-full px-10 max-w-6xl">
+            <!-- Create a Poll -->
+            <div class="form-container">
+                <h3 class="text-2xl font-bold mb-4 text-black">Create a Poll</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="poll-title">Poll Title</label>
+                        <input type="text" id="poll-title" placeholder="Enter poll title">
+                    </div>
+                    <div class="form-group">
+                        <label for="poll-question">Poll Question</label>
+                        <input type="text" id="poll-question" placeholder="Enter poll question">
+                    </div>
+                    <div class="form-group">
+                        <label for="poll-options">Options (comma-separated)</label>
+                        <input type="text" id="poll-options" placeholder="Option1, Option2, Option3">
+                    </div>
+                    <div class="form-group">
+                        <label for="poll-tags">Tags (comma-separated)</label>
+                        <input type="text" id="poll-tags" placeholder="FMI, Programming, AI">
+                    </div>
+                    <button type="button" class="submit-btn" onclick="submitPoll()">Create Poll</button>
+                </form>
+            </div>
+
+            <!-- Create an Article -->
+            <div class="form-container">
+                <h3 class="text-2xl font-bold mb-4 text-black">Create an Article</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="article-title">Article Title</label>
+                        <input type="text" id="article-title" placeholder="Enter article title">
+                    </div>
+                    <div class="form-group">
+                        <label for="article-summary">Summary</label>
+                        <textarea id="article-summary" rows="3" placeholder="Write a short summary..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="article-content">Full Content</label>
+                        <textarea id="article-content" rows="5" placeholder="Write the full article..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="article-tags">Tags (comma-separated)</label>
+                        <input type="text" id="article-tags" placeholder="AI, Programming, University">
+                    </div>
+                    <button type="button" class="submit-btn" onclick="submitArticle()">Create Article</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function submitPoll() {
+            const title = document.getElementById("poll-title").value;
+            const question = document.getElementById("poll-question").value;
+            const options = document.getElementById("poll-options").value;
+            const tags = document.getElementById("poll-tags").value;
+            if (title && question && options) {
+                alert(`Poll Created!\nTitle: ${title}\nQuestion: ${question}\nOptions: ${options}\nTags: ${tags}`);
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        function submitArticle() {
+            const title = document.getElementById("article-title").value;
+            const summary = document.getElementById("article-summary").value;
+            const content = document.getElementById("article-content").value;
+            const tags = document.getElementById("article-tags").value;
+            if (title && summary && content) {
+                alert(`Article Created!\nTitle: ${title}\nSummary: ${summary}\nTags: ${tags}`);
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+    </script>
+
+</body>
+</html>

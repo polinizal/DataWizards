@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Wizards - Recent Articles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            text-align: left;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .modal h3 {
+            color: #222;
+        }
+        .tags-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .tag {
+            background: #2D9596;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .article-card {
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+            background: white;
+            color: black;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        .article-card:hover { transform: scale(1.05); }
+        .article-card h3 { margin-bottom: 10px; }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[#1E2F30] to-[#101618] text-[#F5F5F5] h-screen flex flex-col">
+    <header class="flex items-center p-6 bg-[#101618] shadow-lg text-xl font-semibold">
+        <h1 class="font-extrabold text-[#9AD0C2] text-4xl flex-1 text-left tracking-wide">Data Wizard</h1>
+        <nav class="flex-1 flex justify-center space-x-8">
+            <a href="{% url 'polls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Polls</a>
+            <a href="{% url 'articles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Articles</a>
+            <a href="{% url 'myPolls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Polls</a>
+            <a href="{% url 'myArticles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Articles</a>
+        </nav>
+        <div class="flex-1 flex justify-end space-x-4">
+            <a href="{% url 'contribute' %}">
+                <button class="bg-[#2D9596] text-white px-4 py-2 rounded-lg hover:bg-[#265073] transition duration-300">
+                    Contribute
+                </button>
+            </a>
+            <a href="{% url 'account' %}">
+                <button class="p-2 rounded-full overflow-hidden w-12 h-12 border-2 border-[#9AD0C2]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1508/1508843.png" alt="User Icon" class="w-full h-full">
+                </button>
+            </a>
+        
+            
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
+        <div class="w-full max-w-3xl">
+            <div class="relative w-full flex items-center">
+                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-lg">🔍</span>
+                <input type="text" placeholder="Search..." class="p-4 pl-10 w-full text-lg border border-[#AAAAAA] rounded-lg text-black shadow-md focus:ring-2 focus:ring-[#9AD0C2] focus:border-transparent" id="search-bar">
+            </div>
+        </div>
+        
+            <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
+                <h2 class="text-5xl font-bold text-[#ECF4D6] mt-10 tracking-wide">Our Most Recent Articles</h2>
+                
+                <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full px-10 max-w-6xl">
+                    <script>
+                        const articles = [
+                            { title: "Physics", description: "Physics explores the fundamental nature of the universe, from the smallest subatomic particles to the vastness of space. Topics like relativity, quantum mechanics, and thermodynamics help us understand forces that shape reality. From Newton’s classical mechanics to Einstein’s relativity, physics is at the core of modern technology and scientific advancements.", tags: ["Science", "Physics"] },
+                            { title: "Mathematics", description: "Mathematics is the foundation of all sciences, providing the tools necessary for problem-solving and logical reasoning. From algebra and calculus to statistics and discrete mathematics, it plays a crucial role in technology, economics, and engineering. Without mathematics, modern innovations such as artificial intelligence, cybersecurity, and space exploration would not be possible.", tags: ["Math", "Science", "Technology"] },
+                            { title: "Astronomy", description: "Astronomy is the study of celestial objects and the universe as a whole. It delves into the mysteries of black holes, galaxies, dark matter, and the search for extraterrestrial life. From ancient stargazers to modern space telescopes, astronomy continues to push the boundaries of human knowledge.", tags: ["Science", "Space", "Physics"] },
+                            { title: "Biology", description: "Biology is the study of life and living organisms, from microscopic bacteria to complex ecosystems. Topics include genetics, evolution, physiology, and ecology, helping us understand how life functions and adapts in different environments.", tags: ["Biology", "Science", "Health"] },
+                            { title: "Artificial Intelligence", description: "AI is revolutionizing industries by enabling machines to learn, analyze data, and make decisions. From self-driving cars to natural language processing, AI is shaping the future of technology and raising ethical questions about automation and job displacement.", tags: ["Technology", "AI", "Data Science"] },
+                            { title: "Engineering", description: "Engineering applies scientific and mathematical principles to design and construct everything from bridges to computer circuits. Fields such as civil, mechanical, and software engineering drive innovation and infrastructure development worldwide.", tags: ["Engineering", "Technology", "Science"] }
+                        ];
+                        
+                        document.write(articles.map(article => `
+                            <div class="article-card" onclick="openModal('${article.title}', '${article.description.replace(/'/g, "&#39;")}')">
+                                <h3 class="text-3xl font-semibold">${article.title}</h3>
+                                <p class="text-lg text-gray-700">${article.description.substring(0, 120)}...</p>
+                                <div class="tags-group">
+                                    ${article.tags.map(tag => `<div class="tag">${tag}</div>`).join('')}
+                                </div>
+                            </div>
+                        `).join(''));
+                    </script>
+                </div>
+            </main>
+        
+            <div id="article-modal" class="modal">
+                <div class="modal-overlay" onclick="closeModal()"></div>
+                <div class="modal-content">
+                    <h3 id="modal-title" class="text-2xl font-bold"></h3>
+                    <p id="modal-description" class="text-lg text-gray-700 mt-4"></p>
+                    <button class="mt-4 bg-[#2D9596] text-white p-2 rounded-md" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        
+            <script>
+                function openModal(title, description) {
+                    document.getElementById("modal-title").innerText = title;
+                    document.getElementById("modal-description").innerText = description;
+                    document.getElementById("article-modal").style.display = "flex";
+                }
+                function closeModal() {
+                    document.getElementById("article-modal").style.display = "none";
+                }
+            </script>
+        
+       
+        
+    </main>
+</body>
+</html>

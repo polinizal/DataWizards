@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Wizards - Articles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .article-card {
+            background: white;
+            color: black;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .article-card:hover { transform: scale(1.02); }
+        .tags-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag { background: #2D9596; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9rem; }
+        .article-content {
+            display: none;
+            margin-top: 10px;
+            color: #444;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[#1E2F30] to-[#101618] text-[#F5F5F5] h-screen flex flex-col">
+    <header class="flex items-center p-6 bg-[#101618] shadow-lg text-xl font-semibold">
+        <div class="flex-1">
+            <a href="{% url 'home' %}">
+                <h1 class="font-extrabold text-[#9AD0C2] text-4xl text-left tracking-wide hover:text-[#F5F5F5] transition duration-300">
+                    Data Wizard
+                </h1>
+            </a>
+        </div>
+        
+        <nav class="flex-1 flex justify-center space-x-8">
+            <a href="{% url 'polls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Polls</a>
+            <a href="{% url 'articles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Articles</a>
+            <a href="{% url 'myPolls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Polls</a>
+            <a href="{% url 'myArticles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Articles</a>
+        </nav>
+        <div class="flex-1 flex justify-end space-x-4">
+            <a href="{% url 'contribute' %}">
+                <button class="bg-[#2D9596] text-white px-4 py-2 rounded-lg hover:bg-[#265073] transition duration-300">
+                    Contribute
+                </button>
+            </a>
+            <a href="{% url 'account' %}">
+                <button class="p-2 rounded-full overflow-hidden w-12 h-12 border-2 border-[#9AD0C2]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1508/1508843.png" alt="User Icon" class="w-full h-full">
+                </button>
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
+        <h2 class="text-5xl font-bold text-[#ECF4D6] mt-10 tracking-wide">Explore Our Latest Articles</h2>
+
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full px-10 max-w-6xl">
+            <script>
+                const articles = [
+                    { 
+                        title: "The Future of Artificial Intelligence", 
+                        preview: "AI is evolving rapidly, but what does the future hold? Click to read more...",
+                        content: "AI is advancing faster than ever, with new breakthroughs in deep learning, NLP, and autonomous systems. While some experts worry about the ethical implications of AI, others believe it will revolutionize industries and improve our daily lives. However, regulation and responsible AI development remain crucial topics for debate.",
+                        tags: ["Technology", "AI", "Innovation"]
+                    },
+                    { 
+                        title: "Quantum Computing: The Next Revolution", 
+                        preview: "Quantum computers promise to change the world. Click to read more...",
+                        content: "Quantum computing leverages quantum mechanics to perform computations at speeds unimaginable by classical computers. By harnessing qubits, researchers aim to solve problems in cryptography, material science, and artificial intelligence that were previously thought to be impossible.",
+                        tags: ["Science", "Quantum", "Computing"]
+                    },
+                    { 
+                        title: "Exploring the Depths of Space", 
+                        preview: "Space exploration has reached new heights. Click to read more...",
+                        content: "Space agencies like NASA and SpaceX continue to push the boundaries of exploration. From the Artemis moon missions to Mars colonization plans, humanity is on the brink of becoming an interplanetary species.",
+                        tags: ["Space", "NASA", "Future"]
+                    },
+                    { 
+                        title: "How Mathematics Shapes Our World", 
+                        preview: "Mathematics is the foundation of modern technology. Click to read more...",
+                        content: "From algorithms driving search engines to cryptographic security in banking, mathematics underpins every aspect of our technological world. Understanding the power of numbers can help unlock new possibilities in science, engineering, and economics.",
+                        tags: ["Math", "Science", "Education"]
+                    },
+                    { 
+                        title: "Climate Change and Renewable Energy", 
+                        preview: "With climate change becoming a crisis, renewable energy is crucial. Click to read more...",
+                        content: "Solar, wind, and hydroelectric power are rapidly replacing fossil fuels as the world strives for sustainability. Governments and industries are investing heavily in green energy to combat climate change and reduce carbon footprints.",
+                        tags: ["Environment", "Climate", "Sustainability"]
+                    },
+                    { 
+                        title: "The Rise of Cybersecurity Threats", 
+                        preview: "Cybersecurity is more crucial than ever. Click to read more...",
+                        content: "With an increase in cyber attacks and data breaches, organizations are investing in robust security frameworks. From encryption to ethical hacking, cybersecurity is a rapidly evolving field protecting businesses and individuals alike.",
+                        tags: ["Cybersecurity", "Technology", "Privacy"]
+                    }
+                ];
+
+                document.write(articles.map((article, index) => `
+                    <div class="article-card" onclick="toggleArticle(${index})">
+                        <h3 class="text-2xl font-semibold">${article.title}</h3>
+                        <p id="preview-${index}" class="text-lg text-gray-700">${article.preview}</p>
+                        <p id="content-${index}" class="article-content">${article.content}</p>
+                        <div class="tags-group">
+                            ${article.tags.map(tag => `<div class="tag">${tag}</div>`).join('')}
+                        </div>
+                    </div>
+                `).join(''));
+            </script>
+        </div>
+    </main>
+
+    <script>
+        function toggleArticle(index) {
+            const content = document.getElementById(`content-${index}`);
+            const preview = document.getElementById(`preview-${index}`);
+            
+            if (content.style.display === "none" || content.style.display === "") {
+                content.style.display = "block";
+                preview.style.display = "none";
+            } else {
+                content.style.display = "none";
+                preview.style.display = "block";
+            }
+        }
+
+        function handleContribute() {
+            alert('Contribute button clicked!');
+        }
+    </script>
+</body>
+</html>
