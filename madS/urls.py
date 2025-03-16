@@ -13,5 +13,12 @@ urlpatterns = [
   path('survey/<int:survey_id>/results/', survey_results, name='survey_results'),
   path('index/', views.index, name='index'),
   path('userDataCollector/', views.userDataCollector, name='userDataCollector'),
+  path('home/', views.home, name='home'),
+  path('polls/', views.polls, name='polls'),
+  path('articles/', views.articles, name='articles'),
+  path('myPolls/', views.myPolls, name='myPolls'),
+  path('account/', views.account, name='account'),
+  path('myArticles/', views.myArticles, name='myArticles'),
+  path('contribute/', views.contribute, name='contribute'),
 
 ]

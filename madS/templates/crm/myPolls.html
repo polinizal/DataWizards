@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Wizards - My Polls</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .poll-card {
+            background: white;
+            color: black;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .poll-card:hover { transform: scale(1.02); }
+        .tags-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag { background: #2D9596; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9rem; }
+        .edit-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #265073;
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .edit-btn:hover { background: #1E2F30; }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[#1E2F30] to-[#101618] text-[#F5F5F5] h-screen flex flex-col">
+    <header class="flex items-center p-6 bg-[#101618] shadow-lg text-xl font-semibold">
+        <div class="flex-1">
+            <a href="{% url 'home' %}" class="inline-block">
+                <h1 class="font-extrabold text-[#9AD0C2] text-4xl text-left tracking-wide hover:text-[#F5F5F5] transition duration-300">
+                    Data Wizard
+                </h1>
+            </a>
+        </div>
+        
+        <nav class="flex-1 flex justify-center space-x-8">
+            <a href="{% url 'polls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Polls</a>
+            <a href="{% url 'articles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Articles</a>
+            <a href="{% url 'myPolls' %}" class="text-[#9AD0C2] font-bold transition duration-300">My Polls</a>
+            <a href="{% url 'myArticles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Articles</a>
+        </nav>
+        <div class="flex-1 flex justify-end space-x-4">
+            <a href="{% url 'contribute' %}">
+                <button class="bg-[#2D9596] text-white px-4 py-2 rounded-lg hover:bg-[#265073] transition duration-300">
+                    Contribute
+                </button>
+            </a>
+            <a href="{% url 'account' %}">
+                <button class="p-2 rounded-full overflow-hidden w-12 h-12 border-2 border-[#9AD0C2]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1508/1508843.png" alt="User Icon" class="w-full h-full">
+                </button>
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
+        <h2 class="text-5xl font-bold text-[#ECF4D6] mt-10 tracking-wide">My Created Polls</h2>
+
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full px-10 max-w-6xl">
+            <script>
+                const userPolls = [
+                    { 
+                        title: "Best Programming Language?", 
+                        question: "Which programming language do you think is best for a beginner?", 
+                        options: ["Python", "JavaScript", "C++", "Java"], 
+                        tags: ["Programming", "FMI", "Languages"] 
+                    },
+                    { 
+                        title: "Hardest Subject in FMI?", 
+                        question: "Which of these subjects is the most difficult at FMI?", 
+                        options: ["Mathematical Analysis", "Algorithms", "Linear Algebra", "Data Structures"], 
+                        tags: ["FMI", "University", "Difficulty"] 
+                    },
+                    { 
+                        title: "Should AI Write Code?", 
+                        question: "Do you think AI should replace developers in writing code?", 
+                        options: ["Yes", "No", "Maybe, but under supervision"], 
+                        tags: ["AI", "Programming", "Future"] 
+                    },
+                    { 
+                        title: "Dark Mode or Light Mode?", 
+                        question: "Which UI theme do you prefer when coding?", 
+                        options: ["Dark Mode", "Light Mode", "Depends on the Time of Day"], 
+                        tags: ["UI/UX", "Development", "Design"] 
+                    },
+                    { 
+                        title: "Best Framework for Web Development?", 
+                        question: "Which framework is the best for building web applications?", 
+                        options: ["React", "Angular", "Vue", "Django"], 
+                        tags: ["Web Dev", "Frameworks", "Coding"] 
+                    },
+                    { 
+                        title: "Tabs or Spaces?", 
+                        question: "Do you use tabs or spaces for indentation?", 
+                        options: ["Tabs", "Spaces", "Doesn't Matter"], 
+                        tags: ["Coding Style", "Developers", "Tech Debate"] 
+                    }
+                ];
+
+                document.write(userPolls.map((poll, index) => `
+                    <div class="poll-card" onclick="togglePoll(${index})">
+                        <button class="edit-btn" onclick="editPoll(event, ${index})">Edit</button>
+                        <h3 class="text-2xl font-semibold">${poll.title}</h3>
+                        <p id="question-${index}" class="text-lg text-gray-700">${poll.question}</p>
+                        <form id="poll-${index}" class="hidden mt-3">
+                            ${poll.options.map((option, optIndex) => `
+                                <label class="block mt-2 text-lg">
+                                    <input type="radio" name="vote-${index}" value="${option}" class="mr-2">
+                                    ${option}
+                                </label>
+                            `).join('')}
+                            <button type="button" class="mt-4 bg-[#2D9596] text-white px-4 py-2 rounded-lg hover:bg-[#265073] transition duration-300" onclick="submitVote(event, ${index})">Vote</button>
+                        </form>
+                        <div class="tags-group">
+                            ${poll.tags.map(tag => `<div class="tag">${tag}</div>`).join('')}
+                        </div>
+                    </div>
+                `).join(''));
+            </script>
+        </div>
+    </main>
+
+    <script>
+        function togglePoll(index) {
+            event.stopPropagation();
+            const form = document.getElementById(`poll-${index}`);
+            form.classList.toggle("hidden");
+        }
+
+        function editPoll(event, index) {
+            event.stopPropagation();
+            alert(`Editing Poll: ${index + 1}`);
+        }
+
+        function submitVote(event, index) {
+            event.stopPropagation();
+            alert(`Thank you for voting in: Poll ${index + 1}`);
+        }
+    </script>
+</body>
+</html>
