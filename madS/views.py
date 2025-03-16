@@ -45,3 +45,24 @@ def index(request):
 
 def userDataCollector(request):
     return render(request, 'crm/userDataCollector.html')
+
+def home(request):
+    return render(request, 'crm/home.html')
+
+def polls(request):
+    return render(request, 'crm/polls.html')
+
+def articles(request):
+    return render(request, 'crm/articles.html')
+
+def myPolls(request):
+    return render(request, 'crm/myPolls.html')
+
+def myArticles(request):
+    return render(request, 'crm/myArticles.html')
+
+def account(request):
+    return render(request, 'crm/account.html')
+
+def contribute(request):
+    return render(request, 'crm/contribute.html')
