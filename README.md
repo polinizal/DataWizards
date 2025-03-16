@@ -1,6 +1,7 @@
 # 🧙‍♂️ Data Wizards  
 *A Platform for Collecting and Analyzing Data*  
-
+## 🚀 Presentation
+https://www.canva.com/design/DAFpLDgWSdI/B6tjaUtv5kqURjolo7Wwug/edit?ui=eyJEIjp7IlAiOnsiQiI6ZmFsc2V9fX0
 ## 🚀 Problem  
 In many scientific fields, decision-making relies on crowdsourced data, but traditional voting systems suffer from credibility issues. Unverified participants can skew results, leading to unreliable insights. Scientists need a trustworthy platform that ensures only qualified experts contribute to data-driven discussions.  
 
