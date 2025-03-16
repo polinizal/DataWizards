@@ -37,6 +37,7 @@ class Survey(models.Model):
         null=True,  # Allow null values
         blank=True  # Allow blank values
     )
+    #user_id = models.IntegerField(null=True, blank=True)  # Store user ID as an integer
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     description = models.TextField()

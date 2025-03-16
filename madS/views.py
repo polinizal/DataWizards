@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now, timedelta
+from django.contrib.auth.decorators import login_required
 from .models import Survey, Choice, Question, CustomUser, Tag,  Article
 from .forms import SurveyForm, QuestionForm, ChoiceForm
 
@@ -127,7 +128,7 @@ def survey_builder(request):
     })
 
 
-
+@login_required  # Ensure only logged-in users can create surveys
 def save_survey(request):
     if request.method == "POST":
         title = request.POST.get("title")
@@ -140,11 +141,12 @@ def save_survey(request):
         # ✅ Calculate expiration date
         expires_at = now() + timedelta(days=duration_days)
 
-        # ✅ Create the Survey
+        # ✅ Create the Survey with user ID only (not a foreign key)
         survey = Survey.objects.create(
             title=title,
             description=description,
-            expires_at=expires_at
+            expires_at=expires_at,
+            #user_id=request.user.id  # Store user ID as an integer
         )
 
         # ✅ Process questions
@@ -167,6 +169,7 @@ def save_survey(request):
         return redirect("survey_list")  # Redirect to survey list
 
     return render(request, "survey_builder.html", {"error": "Invalid request"})
+
 
 
 def get_survey(request, survey_id):
