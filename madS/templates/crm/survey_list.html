@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Wizards - My Surveys</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .survey-card {
+            background: white;
+            color: black;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            max-width: 400px;
+            text-align: center;
+        }
+        .survey-card:hover { transform: scale(1.02); }
+        .tags-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; justify-content: center; }
+        .tag { background: #2D9596; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9rem; }
+        .vote-btn {
+            background: #2D9596;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .vote-btn:hover { background: #265073; }
+        .question-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .question-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #222;
+        }
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .option-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 1rem;
+            color: #222;
+        }
+        .option-label input {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[#1E2F30] to-[#101618] text-[#F5F5F5] h-screen flex flex-col">
+<header class="flex items-center p-6 bg-[#101618] shadow-lg text-xl font-semibold">
+        <h1 class="font-extrabold text-[#9AD0C2] text-4xl flex-1 text-left tracking-wide">Data Wizard</h1>
+        <nav class="flex-1 flex justify-center space-x-8">
+            <a href="{% url 'polls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Polls</a>
+            <a href="{% url 'articles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Articles</a>
+            <a href="{% url 'survey_list' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Polls</a>
+            <a href="{% url 'myArticles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Articles</a>
+        </nav>
+        <div class="flex-1 flex justify-end space-x-4">
+            <a href="{% url 'survey_builder' %}">
+                <button class="bg-[#2D9596] text-white px-4 py-2 rounded-lg hover:bg-[#265073] transition duration-300">
+                    Contribute
+                </button>
+            </a>
+            <a href="{% url 'account' %}">
+                <button class="p-2 rounded-full overflow-hidden w-12 h-12 border-2 border-[#9AD0C2]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1508/1508843.png" alt="User Icon" class="w-full h-full">
+                </button>
+            </a>
+        
+            
+        </div>
+    </header>
+    <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
+        <h2 class="text-5xl font-bold text-[#ECF4D6] mt-10 tracking-wide">My Created Surveys</h2>
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full px-10 max-w-6xl">
+            <script>
+                const userPolls = [
+                    {% for survey in surveys %}
+                    {
+                        survey: "{{ survey }}",
+                        title: "{{ survey.title }}",
+                        question: "{{ survey.questions.first.text }}",
+                        choices: [
+                            {% for option in survey.questions.first.choices.all %}
+                                "{{ option.text }}",
+                            {% endfor %}
+                        ],
+                        tags: [
+                            {% for tag in survey.tags.all %}
+                                "{{ tag.name }}",
+                            {% endfor %}
+                        ]
+                    },
+                    {% endfor %}
+                ];
+            </script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const container = document.querySelector(".grid");
+                    userPolls.forEach((poll) => {
+                        const pollCard = document.createElement("div");
+                        pollCard.classList.add("survey-card");
+                        pollCard.innerHTML = `
+                            <h3 class="text-2xl font-bold">${poll.title}</h3>
+                            <p class="text-lg text-gray-700 mt-2">${poll.question}</p>
+                            <form class="mt-4">
+                                <div class="option-list">
+                                    ${poll.choices.map(option => `
+                                        <label class="option-label">
+                                            <input type="radio" name="vote" value="${option}" required>
+                                            ${option}
+                                        </label>
+                                    `).join('')}
+                                </div>
+                                <button type="button" class="vote-btn">Vote</button>
+                            </form>
+                            <div class="tags-group">
+                                ${poll.tags.map(tag => `<div class="tag">${tag}</div>`).join('')}
+                            </div>
+                        `;
+                        container.appendChild(pollCard);
+                    });
+                });
+            </script>
+        </div>
+    </main>
+</body>
+</html>
+
+
+
+
+
+
+

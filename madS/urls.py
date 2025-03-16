@@ -1,6 +1,6 @@
 from django.urls import path, include
 from.import views
-from .views import survey_results
+from .views import survey_results, save_survey, survey_list, survey_display, vote
 urlpatterns = [
   path('home1', views.home, name='home'),
   path('blogs/', views.blogs, name='blogs'),
@@ -20,5 +20,10 @@ urlpatterns = [
   path('account/', views.account, name='account'),
   path('myArticles/', views.myArticles, name='myArticles'),
   path('contribute/', views.contribute, name='contribute'),
+  path("survey-builder/", views.survey_builder, name="survey_builder"),
+  path('survey/<int:survey_id>/', views.survey_display, name='view_survey'),
+  path('survey-list/', views.survey_list, name='survey_list'),
+  path('save-survey/', views.save_survey, name='save_survey'),
+  path("vote/<int:choice_id>/", vote, name="vote"),   
   path('', views.view_articles, name='view_articles'),
 ]
