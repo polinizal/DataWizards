@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Wizards - Survey Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        body { font-family: 'Poppins', sans-serif; color: #222; }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #222;
+        }
+        input, textarea, select {
+            color: black !important;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #AAAAAA;
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: white;
+        }
+        .submit-btn {
+            background: #2D9596;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        .submit-btn:hover { background: #265073; }
+        .tag-dropdown {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .tag-item {
+            background: #2D9596;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .tag-item.selected {
+            background: #265073;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[#1E2F30] to-[#101618] text-[#F5F5F5] h-screen flex flex-col">
+<header class="flex items-center p-6 bg-[#101618] shadow-lg text-xl font-semibold">
+        <h1 class="font-extrabold text-[#9AD0C2] text-4xl flex-1 text-left tracking-wide">Data Wizard</h1>
+        <nav class="flex-1 flex justify-center space-x-8">
+            <a href="{% url 'polls' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Polls</a>
+            <a href="{% url 'articles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">Articles</a>
+            <a href="{% url 'survey_list' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Polls</a>
+            <a href="{% url 'myArticles' %}" class="text-[#F5F5F5] hover:text-[#9AD0C2] transition duration-300 font-medium">My Articles</a>
+        </nav>
+        <div class="flex-1 flex justify-end space-x-4">
+            <a href="{% url 'survey_builder' %}">
+                <button class="bg-[#2D9596] text-white px-4 py-2 rounded-lg hover:bg-[#265073] transition duration-300">
+                    Contribute
+                </button>
+            </a>
+            <a href="{% url 'account' %}">
+                <button class="p-2 rounded-full overflow-hidden w-12 h-12 border-2 border-[#9AD0C2]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1508/1508843.png" alt="User Icon" class="w-full h-full">
+                </button>
+            </a>
+        
+            
+        </div>
+    </header>
+    <main class="flex-1 flex flex-col items-center text-center p-10 w-full">
+        <h2 class="text-5xl font-bold text-[#ECF4D6] mt-10 tracking-wide">Build Your Survey</h2>
+        <p class="text-lg text-[#F5F5F5] mt-4">Create a new survey to gather responses.</p>
+        <div class="form-container">
+            <h3 class="text-2xl font-bold mb-4 text-black">Create a Survey</h3>
+            <form method="POST" action="{% url 'save_survey' %}" id="survey-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="survey-title">Survey Title</label>
+                    <input type="text" id="survey-title" name="title" placeholder="Enter survey title" required>
+                </div>
+                <div class="form-group">
+                    <label for="survey-description">Survey Description</label>
+                    <textarea id="survey-description" name="description" placeholder="Enter survey description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Survey Question</label>
+                    <input type="text" id="survey-question" name="question" placeholder="Enter your question" required>
+                    <div id="options-container" class="mt-3"></div>
+                    <button type="button" onclick="addOption()" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-3">Add Option</button>
+                </div>
+                <div class="form-group">
+                    <label for="survey-tags">Tags</label>
+                    <div id="tag-container" class="tag-dropdown">
+                        {% for tag in available_tags %}
+                            <div class="tag-item" data-id="{{ tag.id }}">{{ tag.name }}</div>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" id="selected-tags" name="tags">
+                </div>
+                <button type="submit" class="submit-btn mt-3">Create Survey</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        function addOption() {
+        const optionsContainer = document.getElementById("options-container");
+        const optionCount = optionsContainer.children.length;
+        const optionWrapper = document.createElement("div");
+
+        optionWrapper.classList.add("flex", "items-center", "gap-2", "mb-2");
+
+        optionWrapper.innerHTML = `
+            <input type="radio" name="selected_option" value="Option ${optionCount + 1}" required>
+            <input type="text" name="option_text_${optionCount}" placeholder="Option text" required class="p-2 border rounded-md text-lg w-full">
+        `;
+
+        optionsContainer.appendChild(optionWrapper);
+    }
+
+        // Multi-select tag handling
+        document.addEventListener("DOMContentLoaded", function() {
+            const tagContainer = document.getElementById("tag-container");
+            const selectedTagsInput = document.getElementById("selected-tags");
+            let selectedTags = [];
+            tagContainer.addEventListener("click", function(event) {
+                if (event.target.classList.contains("tag-item")) {
+                    const tagId = event.target.getAttribute("data-id");
+                    if (selectedTags.includes(tagId)) {
+                        selectedTags = selectedTags.filter(id => id !== tagId);
+                        event.target.classList.remove("selected");
+                    } else {
+                        selectedTags.push(tagId);
+                        event.target.classList.add("selected");
+                    }
+                    selectedTagsInput.value = selectedTags.join(",");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

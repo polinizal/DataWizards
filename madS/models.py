@@ -30,11 +30,17 @@ class Tag(models.Model):
 
 class Survey(models.Model):
     title = models.CharField(max_length=200)
-    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="surveys")
+    creator = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.SET_NULL, 
+        related_name="surveys",
+        null=True,  # Allow null values
+        blank=True  # Allow blank values
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     description = models.TextField()
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)  # ✅ Allow multiple tags
     is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
