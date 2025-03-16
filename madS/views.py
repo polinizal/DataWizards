@@ -1,9 +1,12 @@
+import json
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now, timedelta
 from django.contrib.auth.decorators import login_required
 from .models import Survey, Choice, Question, CustomUser, Tag,  Article
 from .forms import SurveyForm, QuestionForm, ChoiceForm
+from django.db.models import Q
 
 def home(request):
     articles = Article.objects.select_related('survey').prefetch_related('survey__tags').all()

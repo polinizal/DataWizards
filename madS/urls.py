@@ -13,7 +13,7 @@ urlpatterns = [
   path('survey/<int:survey_id>/results/', survey_results, name='survey_results'),
   #path('index/', views.index, name='index'),
   path('userDataCollector/', views.userDataCollector, name='userDataCollector'),
-  path('home/', views.home, name='home'),
+  path('home1/', views.home, name='home'),
   path('polls/', views.polls, name='polls'),
   path('articles/', views.articles, name='articles'),
   path('myPolls/', views.myPolls, name='myPolls'),
@@ -25,5 +25,5 @@ urlpatterns = [
   path('survey-list/', views.survey_list, name='survey_list'),
   path('save-survey/', views.save_survey, name='save_survey'),
   path("vote/<int:choice_id>/", vote, name="vote"),   
-  path('', views.view_articles, name='view_articles'),
+  path('home/', views.view_articles, name='view_articles'),
 ]
