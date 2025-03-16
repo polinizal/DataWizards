@@ -24,3 +24,9 @@ def login(request):
 
 def signup(request):
     return render(request, 'crm/signup.html')
+
+def index(request):
+    return render(request, 'crm/index.html')
+
+def userDataCollector(request):
+    return render(request, 'crm/userDataCollector.html')

@@ -1,0 +1,152 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+    {% tailwind_css %}
+
+    <style>
+        body {
+            background: linear-gradient(to bottom, #1E2F30, #101618);
+            font-family: "Raleway", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #fff;
+            padding: 25px 35px;
+            border-radius: 20px;
+            box-shadow: 2px 2px 5px 5px rgba(0, 0, 0, 0.15);
+            width: 450px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #aaa;
+            border-radius: 20px;
+        }
+
+        input[type="number"] {
+            min: 0;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #aaa;
+            border-radius: 30px;
+            background-color: white;
+        }
+
+        .tags-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .tag {
+            background: #144D53;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s ease, background-image 0.3s ease;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .tag.selected {
+            background: repeating-linear-gradient(45deg, #0E3740, #0E3740 10px, #144D53 10px, #144D53 20px);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #144D53;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #0E3740;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center text-xl font-bold">User Information</h2>
+        <form>
+            <div class="form-group">
+                <label for="first-name">First Name</label>
+                <input type="text" id="first-name" placeholder="Enter your first name">
+            </div>
+            
+            <div class="form-group">
+                <label for="second-name">Second Name</label>
+                <input type="text" id="second-name" placeholder="Enter your second name">
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" placeholder="Enter your age" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Tags</label>
+                <div class="tags-group">
+                    <div class="tag" onclick="toggleTag(this)">Science</div>
+                    <div class="tag" onclick="toggleTag(this)">Technology</div>
+                    <div class="tag" onclick="toggleTag(this)">Engineering</div>
+                    <div class="tag" onclick="toggleTag(this)">Math</div>
+                    <div class="tag" onclick="toggleTag(this)">Data Science</div>
+                    <div class="tag" onclick="toggleTag(this)">Physics</div>
+                    <div class="tag" onclick="toggleTag(this)">Biology</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="file-upload">Attach Documents</label>
+                <input type="file" id="file-upload">
+            </div>
+
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleTag(element) {
+            element.classList.toggle("selected");
+        }
+    </script>
+</body>
+</html>
