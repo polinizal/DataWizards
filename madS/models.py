@@ -40,7 +40,7 @@ class Survey(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
     description = models.TextField()
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)  # ✅ Allow multiple tags
     is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):

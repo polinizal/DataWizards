@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now, timedelta
-from .models import Survey, Choice, Question, CustomUser
+from .models import Survey, Choice, Question, CustomUser, Tag
 from .forms import SurveyForm, QuestionForm, ChoiceForm
 
 def home(request):
@@ -69,6 +69,14 @@ def contribute(request):
     return render(request, 'crm/contribute.html')
 
 
+from django.shortcuts import render, redirect
+from .models import Survey, Question, Choice, Tag
+from .forms import SurveyForm
+
+from django.shortcuts import render, redirect
+from .models import Survey, Question, Choice, Tag
+from .forms import SurveyForm
+
 def survey_builder(request):
     if request.method == "POST":
         print("SAVE SURVEY FUNCTION TRIGGERED")  # Debugging statement
@@ -79,24 +87,33 @@ def survey_builder(request):
             survey.creator = None  # No user required
             survey.save()
 
-            # Handle questions and choices
-            for i in range(1, 6):  # Assume max 5 questions for simplicity
-                question_text = request.POST.get(f'question_{i}')
-                if question_text:
-                    question = Question.objects.create(survey=survey, text=question_text)
+            # Handle question
+            question_text = request.POST.get('question')
+            if question_text:
+                question = Question.objects.create(survey=survey, text=question_text)
 
-                    # Handle choices for each question
-                    for j in range(1, 5):  # Assume max 4 choices per question
-                        choice_text = request.POST.get(f'choice_{i}_{j}')
-                        if choice_text:
-                            Choice.objects.create(question=question, text=choice_text)
+                # Handle choices for the question
+                for i in range(1, 5):  # Assume max 4 choices
+                    choice_text = request.POST.get(f'option_text_{i}')
+                    if choice_text:
+                        Choice.objects.create(question=question, text=choice_text)
+
+            # ✅ Save selected tags
+            selected_tags = request.POST.getlist("tags")  # Get selected tag IDs
+            if selected_tags:
+                survey.tags.set(selected_tags)  # Correct way to set ManyToManyField
 
             return redirect('crm/survey_list')  # Redirect to list of surveys
 
     else:
         survey_form = SurveyForm()
+        available_tags = Tag.objects.all()  # ✅ Fetch available tags
 
-    return render(request, "crm/survey_builder.html", {"survey_form": survey_form})
+    return render(request, "crm/survey_builder.html", {
+        "survey_form": survey_form,
+        "available_tags": available_tags  # ✅ Pass tags to the template
+    })
+
 
 
 def save_survey(request):
@@ -119,19 +136,21 @@ def save_survey(request):
         )
 
         # ✅ Process questions
-        question_keys = [key for key in request.POST.keys() if key.startswith("question_text_")]
-        for key in question_keys:
-            question_text = request.POST.get(key)
-            if question_text:
-                question = Question.objects.create(survey=survey, text=question_text)
+        question_text = request.POST.get("question")
+        if question_text:
+            question = Question.objects.create(survey=survey, text=question_text)
 
-                # ✅ Process choices
-                question_index = key.split("_")[-1]
-                choice_keys = [ck for ck in request.POST.keys() if ck.startswith(f"choice_{question_index}_")]
-                for choice_key in choice_keys:
-                    choice_text = request.POST.get(choice_key)
-                    if choice_text:
-                        Choice.objects.create(question=question, text=choice_text)
+            # ✅ Process choices
+            for i in range(1, 5):  # Assume max 4 choices
+                choice_text = request.POST.get(f'option_text_{i}')
+                if choice_text:
+                    Choice.objects.create(question=question, text=choice_text)
+
+        # ✅ Save selected tags
+        selected_tags = request.POST.get("tags")  # Tags are sent as a comma-separated string
+        if selected_tags:
+            tag_ids = [int(tag_id) for tag_id in selected_tags.split(",") if tag_id.isdigit()]
+            survey.tags.set(Tag.objects.filter(id__in=tag_ids))  # Attach selected tags to the survey
 
         return redirect("survey_list")  # Redirect to survey list
 
