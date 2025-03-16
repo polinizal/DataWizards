@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Survey, Choice
+from .models import Survey, Choice, Article
 import json
 
 
 def home(request):
-   return render(request, 'crm/index.html')  # Updated path
+    articles = Article.objects.select_related('survey').prefetch_related('survey__tags').all()
+    return render(request, 'home.html', {'articles': articles})
 
 def survey_results(request, survey_id):
     survey = get_object_or_404(Survey, id=survey_id)
@@ -20,6 +21,9 @@ def survey_results(request, survey_id):
         "survey": survey,
         "chart_data_json": json.dumps(chart_data)
     })
+def view_articles(request):
+    articles = Article.objects.select_related('survey').prefetch_related('survey__tags').all()
+    return render(request, 'crm/view_articles.html', {'articles': articles})  # Use the correct template
 def blogs(request):
     return render(request, 'crm/base.html')
 

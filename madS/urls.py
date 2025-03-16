@@ -20,5 +20,5 @@ urlpatterns = [
   path('account/', views.account, name='account'),
   path('myArticles/', views.myArticles, name='myArticles'),
   path('contribute/', views.contribute, name='contribute'),
-
+  path('view-articles/', views.view_articles, name='view_articles'),
 ]
