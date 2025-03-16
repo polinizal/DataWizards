@@ -17,6 +17,6 @@ Our platform is designed for collecting, analyzing, and visualizing data through
 ## 🏷️ Used Technologies  
 - **Backend:** Django (Python) for handling user authentication, data processing, and API management.  
 - **Frontend:** HTML, CSS, Tailwind CSS, and JavaScript for a responsive and interactive user experience.  
-- **Database:** PostgreSQL / SQLite  
+- **Database:** SQLite  
 - **Version Control:** Git & GitHub  
 
