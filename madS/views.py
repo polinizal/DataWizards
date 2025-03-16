@@ -35,8 +35,8 @@ def create_blog(request):
 def edit_blog(request):
     return render(request, 'crm/edit_blog.html')
 
-def login(request):
-    return render(request, 'crm/login.html')
+def user_login(request):
+    return render(request, 'crm/user_login.html')
 
 def signup(request):
     return render(request, 'crm/signup.html')
