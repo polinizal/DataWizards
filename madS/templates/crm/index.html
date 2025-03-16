@@ -1,11 +1,130 @@
-{% load static tailwind_tags %}
-<html>
-  <head>
-    <title>webpage</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Wizards</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap');
+        
+        body {
+            margin: 0;
+            font-family: 'Raleway', sans-serif;
+            background: url('https://png.pngtree.com/thumb_back/fh260/background/20230616/pngtree-upward-trending-stock-market-graph-in-3d-rendering-image_3617185.jpg') no-repeat center center/cover;
+            color: white;
+        }
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: rgba(45, 149, 150, 0.8);
+            color: white;
+            padding: 30px 20px;
+        }
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
+        .user-icon {
+            position: absolute;
+            right: 20px;
+            cursor: pointer;
+        }
+        .user-icon img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            margin: 50px auto;
+            width: 80%;
+            border-radius: 10px;
+        }
+        .hero h1 {
+            font-size: 50px;
+            color: #ffffff;
+        }
+        .hero p {
+            font-size: 22px;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+        .hero button {
+            background-color: #2D9596;
+            color: white;
+            padding: 12px 24px;
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .hero button:hover {
+            background-color: #265073;
+        }
+        .experiments {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 50px 20px;
+        }
+        .experiment-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 250px;
+            backdrop-filter: blur(5px);
+        }
+        .experiment-card h3 {
+            margin: 10px 0;
+        }
+        .footer {
+            background: rgba(45, 149, 150, 0.8);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Data Wizards</div>
+        <div class="user-icon" onclick="location.href='{% url 'login' %}'">
 
-    {% tailwind_css %}
-  </head>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Icon">
+        </div>
+    </header>
 
-  <h1>Hello world!</h1>
-  <p>This is my amazing website!</p>
+    <section class="hero">
+        <h1>Unleash the Power of Data</h1>
+        <p>Explore experiments, analyze results, and contribute to the future of data-driven discoveries.</p>
+        <button onclick="location.href='{% url 'login' %}'">Explore Experiments</button>
+    </section>
+
+    <section class="experiments">
+        <div class="experiment-card">
+            <h3>Data Visualization</h3>
+            <p>Learn how to visualize complex data effectively.</p>
+        </div>
+        <div class="experiment-card">
+            <h3>AI & Machine Learning</h3>
+            <p>Discover new AI-driven insights.</p>
+        </div>
+        <div class="experiment-card">
+            <h3>Statistical Analysis</h3>
+            <p>Analyze trends and predict future outcomes.</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2025 Data Wizards. All Rights Reserved.</p>
+    </footer>
+</body>
 </html>
