@@ -1,0 +1,54 @@
+<style>
+    canvas {
+        max-width: 300px;  /* Adjust width */
+        max-height: 300px; /* Adjust height */
+        margin: auto;
+        display: block;
+    }
+</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <h1>Survey: {{ survey.title }}</h1>
+
+    <script>
+        // Ensure JSON is safely parsed
+        var chartData = JSON.parse('{{ chart_data_json|escapejs }}');
+
+        document.addEventListener("DOMContentLoaded", function () {
+            chartData.forEach((questionData, index) => {
+                // Create a canvas for each question dynamically
+                let container = document.createElement("div");
+                let title = document.createElement("h2");
+                title.innerText = questionData.question;
+                let canvas = document.createElement("canvas");
+                canvas.id = "chart_" + index;
+                container.appendChild(title);
+                container.appendChild(canvas);
+                document.body.appendChild(container);
+
+                // Render the chart
+                let ctx = document.getElementById("chart_" + index).getContext("2d");
+                new Chart(ctx, {
+                    type: "pie",
+                    data: {
+                        labels: Object.keys(questionData.data),
+                        datasets: [{
+                            data: Object.values(questionData.data),
+                            backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4bc0c0", "#9966ff"]
+                        }]
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 from django.urls import path, include
 from.import views
+from .views import survey_results
 urlpatterns = [
   path('', views.home, name='home'),
   path('blogs/', views.blogs, name='blogs'),
@@ -9,6 +10,7 @@ urlpatterns = [
   path('edit-blog/', views.edit_blog, name='edit-blog'),
   path('login/', views.login, name='login'),
   path('signup/', views.signup, name='signup'),
+  path('survey/<int:survey_id>/results/', survey_results, name='survey_results'),
   path('index/', views.index, name='index'),
   path('userDataCollector/', views.userDataCollector, name='userDataCollector'),
 
