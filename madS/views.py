@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import now, timedelta
 from .models import Survey, Choice, Question, CustomUser
 from .forms import SurveyForm, QuestionForm, ChoiceForm
 
@@ -71,24 +72,34 @@ def survey_builder(request):
 
     return render(request, "crm/survey_builder.html", {"survey_form": survey_form})
 
+
 def save_survey(request):
     if request.method == "POST":
         title = request.POST.get("title")
+        description = request.POST.get("description")
+        duration_days = int(request.POST.get("duration", 7))  # Default to 7 days
 
-        if not title:
-            return render(request, "survey_builder.html", {"error": "Survey title is required"})
+        if not title or not description:
+            return render(request, "survey_builder.html", {"error": "Title and Description are required"})
 
-        # ✅ Create and save the survey
-        survey = Survey.objects.create(title=title, description="")
+        # ✅ Calculate expiration date
+        expires_at = now() + timedelta(days=duration_days)
 
-        # ✅ Process questions and choices
+        # ✅ Create the Survey
+        survey = Survey.objects.create(
+            title=title,
+            description=description,
+            expires_at=expires_at
+        )
+
+        # ✅ Process questions
         question_keys = [key for key in request.POST.keys() if key.startswith("question_text_")]
         for key in question_keys:
             question_text = request.POST.get(key)
             if question_text:
                 question = Question.objects.create(survey=survey, text=question_text)
 
-                # ✅ Add choices for each question
+                # ✅ Process choices
                 question_index = key.split("_")[-1]
                 choice_keys = [ck for ck in request.POST.keys() if ck.startswith(f"choice_{question_index}_")]
                 for choice_key in choice_keys:
@@ -96,8 +107,7 @@ def save_survey(request):
                     if choice_text:
                         Choice.objects.create(question=question, text=choice_text)
 
-        # ✅ Redirect to survey_list after saving
-        return redirect("survey_list")
+        return redirect("survey_list")  # Redirect to survey list
 
     return render(request, "survey_builder.html", {"error": "Invalid request"})
 

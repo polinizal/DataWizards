@@ -20,41 +20,29 @@
             <form method="POST" action="{% url 'save_survey' %}" id="survey-form">
                 {% csrf_token %}
 
+                <!-- Survey Title -->
                 <input type="text" name="title" id="surveyTitle" placeholder="Survey Title" required 
                     class="w-full p-4 border rounded-md mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
                     value="{{ survey_title|default:'' }}">
 
-                <div id="questions">
-                    {% for question_key, question_text in questions_data.items %}
-                        {% if "question_text_" in question_key %}
-                            <div class="question bg-gray-100 p-6 rounded-md mt-6 border shadow">
-                                <input type="text" name="{{ question_key }}" value="{{ question_text }}" placeholder="Question text"
-                                    class="w-full p-3 border rounded-md mb-3 text-lg">
+                <!-- Survey Description -->
+                <textarea name="description" placeholder="Survey Description" required
+                    class="w-full p-4 border rounded-md mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                    {{ survey_description|default:'' }}
+                </textarea>
 
-                                <select name="question_type_{{ forloop.counter0 }}" class="w-full p-3 border rounded-md text-lg">
-                                    <option value="radio">Multiple Choice</option>
-                                    <option value="checkbox">Checkbox</option>
-                                </select>
+                <!-- Duration Selector -->
+                <label for="duration" class="block text-lg font-semibold mb-2">Survey Duration</label>
+                <select name="duration" id="duration" required
+                    class="w-full p-4 border rounded-md mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                    <option value="1">1 Day</option>
+                    <option value="3">3 Days</option>
+                    <option value="7" selected>1 Week</option>
+                    <option value="14">2 Weeks</option>
+                    <option value="30">1 Month</option>
+                </select>
 
-                                <div class="options mt-3">
-                                    <button type="button" onclick="addOption({{ forloop.counter0 }})" class="bg-blue-500 text-white px-4 py-2 rounded-md mt-3">
-                                        Add Option
-                                    </button>
-                                    <ul id="option-list-{{ forloop.counter0 }}" class="mt-3">
-                                        {% for choice_key, choice_text in questions_data.items %}
-                                            {% if "choice_" in choice_key and choice_key|slice:9 == question_key|slice:13 %}
-                                                <li>
-                                                    <input type="text" name="{{ choice_key }}" value="{{ choice_text }}" placeholder="Option"
-                                                        class="p-3 bg-gray-200 rounded-md mt-2 border text-lg w-full">
-                                                </li>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                <div id="questions"></div>
 
                 <div class="flex justify-between mt-8">
                     <button type="button" onclick="addQuestion()" class="bg-blue-500 text-white px-6 py-3 rounded-md text-lg">
@@ -118,6 +106,9 @@
             previewDiv.innerHTML = "<h3 class='text-2xl font-bold mb-6 text-center'>Survey Preview</h3>";
 
             const title = document.getElementById("surveyTitle").value.trim();
+            const description = document.querySelector("textarea[name='description']").value.trim();
+            const duration = document.getElementById("duration").selectedOptions[0].text;
+
             if (!title) {
                 alert("Please enter a survey title before previewing.");
                 return;
@@ -127,6 +118,16 @@
             titleElement.className = "text-2xl font-bold mb-6 text-center";
             titleElement.textContent = title;
             previewDiv.appendChild(titleElement);
+
+            const descriptionElement = document.createElement("p");
+            descriptionElement.className = "text-lg mb-4 text-center text-gray-700";
+            descriptionElement.textContent = description;
+            previewDiv.appendChild(descriptionElement);
+
+            const durationElement = document.createElement("p");
+            durationElement.className = "text-sm mb-4 text-center text-gray-500";
+            durationElement.textContent = "Duration: " + duration;
+            previewDiv.appendChild(durationElement);
 
             const questions = document.querySelectorAll(".question");
             questions.forEach((q, i) => {
@@ -158,6 +159,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 

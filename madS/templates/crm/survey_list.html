@@ -16,11 +16,25 @@
     <main class="min-h-screen flex justify-center items-center">
         <div class="max-w-4xl w-full bg-white p-12 rounded-lg shadow-lg mt-6">
             <h2 class="text-3xl font-bold mb-6 text-center">Saved Surveys</h2>
+
+            <!-- Survey List -->
             <ul class="space-y-4">
                 {% for survey in surveys %}
-                    <li class="bg-gray-100 p-4 rounded-md shadow-md flex justify-between">
-                        <span class="text-lg font-semibold">{{ survey.title }}</span>
-                        <a href="{% url 'view_survey' survey.id %}" class="bg-blue-500 text-white px-4 py-2 rounded-md">View</a>
+                    <li class="bg-gray-100 p-4 rounded-md shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <!-- Left Side: Text Content -->
+                        <div class="flex-1">
+                            <span class="text-lg font-semibold block">{{ survey.title }}</span>
+                            <p class="text-gray-600 text-sm mt-1">{{ survey.description }}</p>
+                            <p class="text-gray-500 text-xs mt-1">Expires on: {{ survey.expires_at }}</p>
+                        </div>
+
+                        <!-- Right Side: Button -->
+                        <div class="flex items-center justify-end">
+                            <a href="{% url 'view_survey' survey.id %}" 
+                               class="bg-blue-500 text-white text-lg font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-200">
+                                View
+                            </a>
+                        </div>
                     </li>
                 {% empty %}
                     <p class="text-gray-500 text-center">No surveys available.</p>
@@ -30,5 +44,11 @@
     </main>
 </body>
 </html>
+
+
+
+
+
+
 
 
